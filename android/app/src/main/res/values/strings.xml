@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name displayed under the launcher icon.
+         \n creates a line break so it reads:
+           Karachi
+           Pharmacy
+    -->
+    <string name="app_name">Karachi\nPharmacy</string>
+</resources>
