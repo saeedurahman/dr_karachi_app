@@ -51,10 +51,29 @@ class _HomeScreenContent extends StatelessWidget {
           final homeLoaded = state is HomeLoaded ? state : null;
 
           final selectedBranch = homeLoaded?.selectedBranch;
-          final branchCity = selectedBranch?.city ?? 'Quetta';
-          final branchDisplayName = selectedBranch != null
-              ? '${selectedBranch.name.split(" ").first}, $branchCity'
-              : 'KLDC';
+          final branchCity = (selectedBranch?.city ?? 'Quetta').trim();
+
+          // Root cause fix: Previously '${selectedBranch.name.split(" ").first}, $branchCity'
+          // was used. Since the backend branch names start with the city (e.g. "Quetta - Zain Plaza"
+          // or "Quetta"), splitting by space and taking the first word resulted in "Quetta",
+          // and appending ", $branchCity" produced the duplicate "Quetta, Quetta".
+          final String branchDisplayName;
+          if (selectedBranch != null) {
+            final branchName = selectedBranch.name.trim();
+            final firstNamePart = branchName.split(' ').first.trim();
+
+            if (firstNamePart.toLowerCase() == branchCity.toLowerCase() ||
+                branchName.toLowerCase() == branchCity.toLowerCase()) {
+              // Same name / city (e.g. "Quetta" or "Quetta - Zain Plaza"), show single city name
+              branchDisplayName = branchCity;
+            } else if (branchName.isNotEmpty) {
+              branchDisplayName = firstNamePart;
+            } else {
+              branchDisplayName = branchCity;
+            }
+          } else {
+            branchDisplayName = branchCity.isNotEmpty ? branchCity : 'KLDC';
+          }
 
           return RefreshIndicator(
             color: AppColors.primaryAccent,
@@ -227,9 +246,8 @@ class _HomeScreenContent extends StatelessWidget {
                           onBookDoctor: (doc) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => DoctorProfileScreen(
-                                  doctor: doc,
-                                ),
+                                builder: (_) =>
+                                    DoctorProfileScreen(doctor: doc),
                               ),
                             );
                           },
@@ -601,8 +619,10 @@ class _DynamicBranchSelectorState extends State<_DynamicBranchSelector> {
   @override
   Widget build(BuildContext context) {
     final label = widget.selectedBranch != null
-        ? '${widget.selectedBranch!.name.split(' ').first}, ${widget.selectedBranch!.city}'
-        : 'Quetta, Balochistan';
+        ? (widget.selectedBranch!.city.trim().isNotEmpty
+            ? widget.selectedBranch!.city.trim()
+            : widget.selectedBranch!.name.trim())
+        : 'Quetta';
 
     return CompositedTransformTarget(
       link: _layerLink,

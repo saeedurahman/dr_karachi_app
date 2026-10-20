@@ -434,7 +434,8 @@ class _PharmacyScreenContent extends StatelessWidget {
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, cartState) {
         final currentBranch = cartState is CartLoaded ? cartState.currentBranch : null;
-        final branchName = currentBranch?.name ?? 'Quetta Cantt Branch';
+        final branchName = currentBranch?.name ?? 'Quetta - Zain Plaza';
+        final city = currentBranch?.city ?? 'Balochistan';
 
         return GestureDetector(
           onTap: () => _openBranchSelectionSheet(context, cartState),
@@ -469,7 +470,7 @@ class _PharmacyScreenContent extends StatelessWidget {
                       ),
                       Flexible(
                         child: Text(
-                          '$branchName (Quetta)',
+                          '$branchName ($city)',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(

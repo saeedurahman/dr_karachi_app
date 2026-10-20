@@ -45,13 +45,13 @@ class PatientAppointmentModel {
     }
 
     // Parse Branch Summary
-    String brName = 'Main Diagnostic & Clinical Branch';
-    String brCity = 'Karachi';
+    String brName = 'Quetta Centre';
+    String brCity = 'Quetta';
     String brAddr = '';
     if (json['branch'] is Map<String, dynamic>) {
       final br = json['branch'] as Map<String, dynamic>;
-      brName = br['name'] as String? ?? 'Karachi Clinic Branch';
-      brCity = br['city'] as String? ?? 'Karachi';
+      brName = br['name'] as String? ?? 'Quetta Centre';
+      brCity = br['city'] as String? ?? 'Quetta';
       brAddr = br['address'] as String? ?? '';
     }
 

@@ -1,5 +1,13 @@
-import '../../../home/data/models/lab_test_model.dart';
+import '../../data/models/lab_tests_page_response.dart';
 
 abstract class LabRepository {
-  Future<List<LabTestModel>> getLabTests({String? branchId, String? search});
+  Future<LabTestsPageResponse> getLabTests({
+    int page = 1,
+    int limit = 20,
+    String? search,
+    String? category,
+    String? branchId,
+  });
+
+  Future<List<String>> getCategories();
 }

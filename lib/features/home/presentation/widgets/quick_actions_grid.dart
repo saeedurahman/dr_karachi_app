@@ -34,7 +34,7 @@ class QuickActionsGrid extends StatelessWidget {
         value: productsCount != null && productsCount! > 0
             ? '$productsCount+ Medicines'
             : '100% Genuine',
-        subtitle: 'Authentic medicines & doorstep delivery in Karachi',
+        subtitle: 'Authentic medicines & doorstep delivery in Balochistan',
         icon: Icons.medication_rounded,
         color: AppColors.primaryAccent,
         onTap: onPharmacyTap,
@@ -42,8 +42,8 @@ class QuickActionsGrid extends StatelessWidget {
       OverviewKpiCard(
         title: 'Diagnostic Laboratory',
         value: labTestsCount != null && labTestsCount! > 0
-            ? '$labTestsCount+ Tests Available'
-            : 'Accurate Reports',
+            ? '$labTestsCount+ Tests'
+            : '100,000+ Monthly',
         subtitle: 'Pathology lab tests & free home sample collection',
         icon: Icons.biotech_rounded,
         color: const Color(0xFF0284C7),
@@ -60,11 +60,11 @@ class QuickActionsGrid extends StatelessWidget {
         onTap: onDoctorsTap,
       ),
       OverviewKpiCard(
-        title: 'Branch Network',
+        title: 'Diagnostic Centres',
         value: branchesCount != null && branchesCount! > 0
-            ? '$branchesCount Branches'
-            : 'Across Karachi',
-        subtitle: 'Modern pharmacies & collection centers network',
+            ? '$branchesCount Centres'
+            : '5 Centres',
+        subtitle: '5 centres across Balochistan for healthcare & labs',
         icon: Icons.store_mall_directory_rounded,
         color: const Color(0xFF7C3AED),
         onTap: onBranchesTap,

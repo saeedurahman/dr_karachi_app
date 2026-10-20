@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../home/data/models/lab_test_model.dart';
 import 'book_lab_test_modal.dart';
-import 'lab_accreditations_sheet.dart';
 import 'lab_test_reviews_modal.dart';
 
 class LabTestCard extends StatelessWidget {
@@ -17,6 +16,13 @@ class LabTestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reportingText = test.reportingTime?.trim().isNotEmpty == true
+        ? test.reportingTime!
+        : (test.turnaroundHours != null ? 'Report in ${test.turnaroundHours}h' : null);
+
+    final hasCategory = test.category != null && test.category!.trim().isNotEmpty;
+    final hasSpecimen = test.specimen != null && test.specimen!.trim().isNotEmpty;
+
     return GestureDetector(
       onTap: () {
         if (onBookTap != null) {
@@ -44,32 +50,48 @@ class LabTestCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Row: Code badge + Turnaround time
+            // Top Row: Code badge + Category badge + Reporting Time
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0284C7).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        test.code.isNotEmpty ? test.code : 'LAB TEST',
-                        style: const TextStyle(
-                          fontFamily: 'DM Sans',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0284C7),
-                        ),
+                if (test.code.isNotEmpty) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0284C7).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      test.code,
+                      style: const TextStyle(
+                        fontFamily: 'DM Sans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0284C7),
                       ),
                     ),
-                  ],
-                ),
-                if (test.turnaroundHours != null)
+                  ),
+                  const SizedBox(width: 6),
+                ],
+                if (hasCategory) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceVariant,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      test.category!,
+                      style: const TextStyle(
+                        fontFamily: 'DM Sans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.structuralNavy,
+                      ),
+                    ),
+                  ),
+                ],
+                const Spacer(),
+                if (reportingText != null)
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -80,7 +102,7 @@ class LabTestCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Report: ${test.turnaroundHours}h',
+                        reportingText,
                         style: const TextStyle(
                           fontFamily: 'DM Sans',
                           fontSize: 11,
@@ -103,70 +125,80 @@ class LabTestCard extends StatelessWidget {
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppColors.structuralNavy,
+                height: 1.25,
               ),
             ),
 
-            // Description
-            if (test.description != null && test.description!.isNotEmpty) ...[
-              const SizedBox(height: 4),
+            // Specimen row (hidden if null or empty)
+            if (hasSpecimen) ...[
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.biotech_outlined,
+                    size: 14,
+                    color: Color(0xFF0D9488),
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      'Specimen: ${test.specimen!}',
+                      style: const TextStyle(
+                        fontFamily: 'DM Sans',
+                        fontSize: 11.5,
+                        color: Color(0xFF0F766E),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+
+            // Description (if present and non-empty)
+            if (test.description != null && test.description!.trim().isNotEmpty) ...[
+              const SizedBox(height: 6),
               Text(
                 test.description!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'DM Sans',
-                  fontSize: 12,
+                  fontSize: 11.5,
                   color: AppColors.secondary.withValues(alpha: 0.85),
                   height: 1.35,
                 ),
               ),
             ],
 
-            const SizedBox(height: 10),
-
-            // Website-Style Accreditation Buttons: ISO, CAP, PNRA, NQA, SINDH HC, BALOCHISTAN HC
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: LabAccreditation.all.map((acc) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: LabAccreditationButtonChip(
-                      accreditation: acc,
-                      compact: true,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
             // Home Sampling Badge if available
             if (test.homeSamplingAvailable) ...[
+              const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: const Color(0xFF10B981).withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
                       Icons.home_work_rounded,
-                      size: 12,
+                      size: 11,
                       color: Color(0xFF059669),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       test.homeSamplingFee > 0
-                          ? 'Home Sampling Available (+Rs. ${test.homeSamplingFee.toStringAsFixed(0)})'
+                          ? 'Home Sampling (+PKR ${test.homeSamplingFee.toStringAsFixed(0)})'
                           : 'Free Home Sampling Available',
                       style: const TextStyle(
                         fontFamily: 'DM Sans',
-                        fontSize: 11,
+                        fontSize: 10.5,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF059669),
                       ),
@@ -174,8 +206,9 @@ class LabTestCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
             ],
+
+            const SizedBox(height: 12),
 
             // Price & Book Action Row
             Row(
@@ -185,7 +218,7 @@ class LabTestCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Standard Price',
+                      'Standard Fee',
                       style: TextStyle(
                         fontFamily: 'DM Sans',
                         fontSize: 10,
@@ -193,12 +226,13 @@ class LabTestCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Rs. ${test.price.toStringAsFixed(0)}',
+                      'PKR ${test.price.toStringAsFixed(0)}',
                       style: const TextStyle(
                         fontFamily: 'Plus Jakarta Sans',
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.w800,
                         color: Color(0xFF0284C7),
+                        letterSpacing: -0.2,
                       ),
                     ),
                   ],
@@ -225,14 +259,14 @@ class LabTestCard extends StatelessWidget {
                       ),
                       icon: const Icon(
                         Icons.star_outline_rounded,
-                        size: 15,
+                        size: 14,
                         color: Color(0xFFF59E0B),
                       ),
                       label: const Text(
                         'Reviews',
                         style: TextStyle(
                           fontFamily: 'DM Sans',
-                          fontSize: 11.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -247,7 +281,7 @@ class LabTestCard extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0284C7),
+                        backgroundColor: AppColors.primaryAccent,
                         foregroundColor: Colors.white,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(
@@ -260,7 +294,11 @@ class LabTestCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      icon: const Icon(Icons.bookmark_add_rounded, size: 15),
+                      icon: const Icon(
+                        Icons.calendar_month_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      ),
                       label: const Text(
                         'Book Test',
                         style: TextStyle(

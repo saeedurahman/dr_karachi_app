@@ -49,14 +49,15 @@ class _BookLabTestModalState extends State<BookLabTestModal> {
   late LabCollectionMode _collectionMode;
   DateTime _selectedDate = DateTime.now();
   String _selectedTimeSlot = '07:00 AM - 09:30 AM (Fasting)';
-  String _selectedBranch = 'Main Campus - Saddar';
+  String _selectedBranch = 'Quetta - Zain Plaza';
   bool _isSubmitting = false;
 
   final List<String> _branches = const [
-    'Main Campus - Saddar',
-    'Clifton Diagnostic Wing',
-    'Gulshan Medical Center',
-    'Quetta Diagnostic Hub',
+    'Quetta - Zain Plaza',
+    'Quetta - Civil Hospital',
+    'Loralai',
+    'Nushki',
+    'Muslim Bagh',
   ];
 
   final List<String> _timeSlots = const [
@@ -1155,7 +1156,7 @@ class _BookLabTestModalState extends State<BookLabTestModal> {
             child: ElevatedButton.icon(
               onPressed: _isSubmitting ? null : _submitBooking,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0284C7),
+                backgroundColor: AppColors.primaryAccent,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(

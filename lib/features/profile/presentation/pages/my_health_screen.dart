@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/data/models/user_model.dart';
@@ -12,6 +13,8 @@ import '../../data/models/patient_lab_report_model.dart';
 import '../../data/models/patient_order_model.dart';
 import '../widgets/cancel_appointment_dialog.dart';
 import '../widgets/edit_profile_modal.dart';
+import '../../../../core/widgets/stat_count_up_text.dart';
+import '../../../lab/presentation/widgets/lab_accreditations_sheet.dart';
 
 class MyHealthScreen extends StatefulWidget {
   const MyHealthScreen({super.key});
@@ -187,11 +190,7 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0F172A),
-            Color(0xFF1E293B),
-            Color(0xFF0F172A),
-          ],
+          colors: [Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0F172A)],
         ),
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
@@ -246,7 +245,10 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                       decoration: BoxDecoration(
                         color: const Color(0xFF10B981),
                         shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFF0F172A), width: 2),
+                        border: Border.all(
+                          color: const Color(0xFF0F172A),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -263,12 +265,12 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            'Welcome back, $firstName',
-                            maxLines: 1,
+                            'Welcome back \n $firstName',
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 16.5,
+                              fontSize: 12.5,
                               fontWeight: FontWeight.w800,
                               color: Colors.white,
                             ),
@@ -281,32 +283,34 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                             vertical: 1.5,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                            color: const Color(0xFF10B981)
+                                .withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.4),
+                              color: const Color(0xFF10B981)
+                                  .withValues(alpha: 0.4),
                             ),
                           ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.verified_rounded,
-                                size: 9,
-                                color: Color(0xFF34D399),
-                              ),
-                              SizedBox(width: 2),
-                              Text(
-                                'Active',
-                                style: TextStyle(
-                                  fontFamily: 'DM Sans',
-                                  fontSize: 8.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF34D399),
-                                ),
-                              ),
-                            ],
-                          ),
+                          // child: const Row(
+                          //   mainAxisSize: MainAxisSize.min,
+                          //   children: [
+                          //     Icon(
+                          //       Icons.verified_rounded,
+                          //       size: 9,
+                          //       color: Color(0xFF34D399),
+                          //     ),
+                          //     SizedBox(width: 2),
+                          //     Text(
+                          //       'Active',
+                          //       style: TextStyle(
+                          //         fontFamily: 'DM Sans',
+                          //         fontSize: 8.5,
+                          //         fontWeight: FontWeight.w700,
+                          //         color: Color(0xFF34D399),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
                         ),
                       ],
                     ),
@@ -365,7 +369,10 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                   onTap: () => EditProfileModal.show(context, user: user),
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 7,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
@@ -561,13 +568,14 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
         icon: Icons.calendar_today_rounded,
         iconColor: const Color(0xFF0D9488),
         title: 'No Appointments Scheduled',
-        subtitle:
-            'You do not have any pending or past doctor consultations. Book an appointment with verified consultants in-clinic or online.',
+        subtitle: 'You do not have any pending or past doctor consultations. Book an appointment with verified consultants in-clinic or online.',
         actionLabel: 'Find a Specialist',
         onAction: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Please select Doctors tab from the bottom navigation.'),
+              content: Text(
+                'Please select Doctors tab from the bottom navigation.',
+              ),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Color(0xFF0D9488),
             ),
@@ -816,7 +824,10 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFFDC2626),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -848,13 +859,14 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
         icon: Icons.biotech_rounded,
         iconColor: const Color(0xFF0284C7),
         title: 'No Diagnostic Reports Found',
-        subtitle:
-            'Diagnostic test reports verified by our CAP and ISO 15189 accredited pathology lab will appear here automatically with secure 1-click download.',
+        subtitle: 'Diagnostic test reports verified by our CAP and ISO 15189 accredited pathology lab will appear here automatically with secure 1-click download.',
         actionLabel: 'Book Diagnostic Test',
         onAction: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Please select Lab Tests tab from the bottom navigation.'),
+              content: Text(
+                'Please select Lab Tests tab from the bottom navigation.',
+              ),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Color(0xFF0284C7),
             ),
@@ -987,7 +999,11 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.verified_rounded, size: 10, color: Color(0xFF059669)),
+                    Icon(
+                      Icons.verified_rounded,
+                      size: 10,
+                      color: Color(0xFF059669),
+                    ),
                     SizedBox(width: 3),
                     Text(
                       'Signed',
@@ -1026,7 +1042,10 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                   backgroundColor: const Color(0xFF0284C7),
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   shape: RoundedRectangleBorder(
@@ -1061,13 +1080,14 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
         icon: Icons.medication_rounded,
         iconColor: AppColors.primaryAccent,
         title: 'No Pharmacy Orders Yet',
-        subtitle:
-            'Order genuine temperature-controlled medicines and prescription drugs with certified pharmacist dispatch and doorstep tracking.',
+        subtitle: 'Order genuine temperature-controlled medicines and prescription drugs with certified pharmacist dispatch and doorstep tracking.',
         actionLabel: 'Order Medicines',
         onAction: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Please select Pharmacy tab from the bottom navigation.'),
+              content: Text(
+                'Please select Pharmacy tab from the bottom navigation.',
+              ),
               behavior: SnackBarBehavior.floating,
               backgroundColor: AppColors.primaryAccent,
             ),
@@ -1141,7 +1161,9 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
 
     final dateStr =
         '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}';
-    final shortId = order.id.length > 8 ? order.id.substring(0, 8).toUpperCase() : order.id;
+    final shortId = order.id.length > 8
+        ? order.id.substring(0, 8).toUpperCase()
+        : order.id;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -1347,7 +1369,7 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                           ),
                         ),
                         Text(
-                          '(021) 111-KARACHI (527224)',
+                          '0319-1353930 / 0310-8665561',
                           style: TextStyle(
                             fontFamily: 'DM Sans',
                             fontSize: 12,
@@ -1358,12 +1380,15 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => launchUrl(Uri.parse('tel:021111527224')),
+                    onPressed: () => launchUrl(Uri.parse('tel:03191353930')),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4F46E5),
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -1423,13 +1448,16 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                   ),
                   OutlinedButton(
                     onPressed: () => launchUrl(
-                      Uri.parse('https://wa.me/923001234567'),
+                      Uri.parse('https://wa.me/923108665561'),
                       mode: LaunchMode.externalApplication,
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF16A34A),
                       side: const BorderSide(color: Color(0xFF16A34A)),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -1452,7 +1480,7 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
 
         // Standards & Privacy
         const Text(
-          'Security & Medical Privacy',
+          'Security, Medical Privacy & Accreditations',
           style: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 15,
@@ -1469,26 +1497,98 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
             border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSettingItem(
                 icon: Icons.shield_outlined,
                 iconColor: const Color(0xFF0D9488),
-                title: 'Data Privacy & HIPAA Compliance',
+                title: 'Data Privacy & Clinical Compliance',
                 subtitle: 'Your medical health records are encrypted at rest & transit',
               ),
               const Divider(height: 16, color: Color(0xFFF1F5F9)),
               _buildSettingItem(
                 icon: Icons.verified_outlined,
                 iconColor: const Color(0xFF0284C7),
-                title: 'Certified Pharmacy & Pathology',
-                subtitle: 'Sindh Healthcare Commission & ISO 15189 licensed',
+                title: 'Healthcare Network',
+                subtitle: '5 centres across Balochistan • 60+ years legacy',
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'ACCREDITATIONS & CERTIFICATIONS',
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.secondary,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: LabAccreditation.certificationNames.map((name) {
+                  return CertificationBadge(name: name, compact: true);
+                }).toList(),
+              ),
+              const Divider(height: 16, color: Color(0xFFF1F5F9)),
+              // Count-Up Stat Highlight (100,000+ monthly tests)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFF1F5F9)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFC92A2A).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.science_rounded,
+                        size: 18,
+                        color: Color(0xFFC92A2A),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StatCountUpText(
+                            target: 100000,
+                            suffix: '+',
+                            style: const TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFC92A2A),
+                            ),
+                          ),
+                          const Text(
+                            'Lab tests processed monthly',
+                            style: TextStyle(
+                              fontFamily: 'DM Sans',
+                              fontSize: 11,
+                              color: AppColors.secondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const Divider(height: 16, color: Color(0xFFF1F5F9)),
               _buildSettingItem(
                 icon: Icons.info_outline_rounded,
                 iconColor: AppColors.secondary,
                 title: 'App Version',
-                subtitle: 'Dr. Karachi Healthcare v1.0.0 (Release Build)',
+                subtitle: 'Karachi Lab Pharmacy Healthcare v1.0.0',
               ),
             ],
           ),
@@ -1582,7 +1682,10 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(fontFamily: 'DM Sans')),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(fontFamily: 'DM Sans'),
+            ),
           ),
           ElevatedButton(
             onPressed: () {

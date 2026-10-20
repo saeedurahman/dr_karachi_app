@@ -41,15 +41,22 @@ class DoctorsCubit extends Cubit<DoctorsState> {
       final doctors = await repository.getDoctors(branchId: _currentBranchId);
       if (isClosed) return;
 
-      // Extract unique specializations
+      // Extract unique specializations and cities
       final specsSet = <String>{'All'};
+      final citiesSet = <String>{'All'};
       for (final doc in doctors) {
         if (doc.specialization.isNotEmpty) {
           specsSet.add(doc.specialization);
         }
+        for (final b in doc.branches) {
+          if (b.city.isNotEmpty) {
+            citiesSet.add(b.city);
+          }
+        }
       }
 
       final specsList = specsSet.toList();
+      final citiesList = citiesSet.toList();
       String selectedSpec = 'All';
       if (_currentSpecialization != null &&
           _currentSpecialization!.isNotEmpty &&
@@ -67,13 +74,15 @@ class DoctorsCubit extends Cubit<DoctorsState> {
         selectedSpec = matched;
       }
 
-      final filtered = _applyFilters(doctors, selectedSpec, '');
+      final filtered = _applyFilters(doctors, selectedSpec, 'All', '');
 
       emit(DoctorsLoaded(
         allDoctors: doctors,
         filteredDoctors: filtered,
         specializations: specsList,
         selectedSpecialization: selectedSpec,
+        cities: citiesList,
+        selectedCity: 'All',
         searchQuery: '',
       ));
     } catch (_) {
@@ -90,11 +99,29 @@ class DoctorsCubit extends Cubit<DoctorsState> {
     final filtered = _applyFilters(
       currentState.allDoctors,
       specialization,
+      currentState.selectedCity,
       currentState.searchQuery,
     );
 
     emit(currentState.copyWith(
       selectedSpecialization: specialization,
+      filteredDoctors: filtered,
+    ));
+  }
+
+  void selectCity(String city) {
+    final currentState = state;
+    if (currentState is! DoctorsLoaded) return;
+
+    final filtered = _applyFilters(
+      currentState.allDoctors,
+      currentState.selectedSpecialization,
+      city,
+      currentState.searchQuery,
+    );
+
+    emit(currentState.copyWith(
+      selectedCity: city,
       filteredDoctors: filtered,
     ));
   }
@@ -106,6 +133,7 @@ class DoctorsCubit extends Cubit<DoctorsState> {
     final filtered = _applyFilters(
       currentState.allDoctors,
       currentState.selectedSpecialization,
+      currentState.selectedCity,
       query,
     );
 
@@ -118,6 +146,7 @@ class DoctorsCubit extends Cubit<DoctorsState> {
   List<DoctorModel> _applyFilters(
     List<DoctorModel> doctors,
     String specialization,
+    String city,
     String query,
   ) {
     return doctors.where((doc) {
@@ -131,6 +160,13 @@ class DoctorsCubit extends Cubit<DoctorsState> {
       if (specialization != 'All' &&
           doc.specialization.toLowerCase() != specialization.toLowerCase()) {
         return false;
+      }
+
+      if (city != 'All') {
+        final matchesCity = doc.branches.any(
+          (b) => b.city.toLowerCase() == city.toLowerCase(),
+        );
+        if (!matchesCity) return false;
       }
 
       return true;

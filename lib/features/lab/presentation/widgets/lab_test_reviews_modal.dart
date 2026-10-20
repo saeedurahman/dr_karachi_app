@@ -506,7 +506,7 @@ class _LabTestReviewsModalState extends State<LabTestReviewsModal> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0284C7),
+                      backgroundColor: AppColors.primaryAccent,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),

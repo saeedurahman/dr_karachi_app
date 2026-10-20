@@ -11,6 +11,8 @@ class DoctorsLoaded extends DoctorsState {
   final List<DoctorModel> filteredDoctors;
   final List<String> specializations;
   final String selectedSpecialization;
+  final List<String> cities;
+  final String selectedCity;
   final String searchQuery;
 
   DoctorsLoaded({
@@ -18,6 +20,8 @@ class DoctorsLoaded extends DoctorsState {
     required this.filteredDoctors,
     required this.specializations,
     this.selectedSpecialization = 'All',
+    this.cities = const ['All'],
+    this.selectedCity = 'All',
     this.searchQuery = '',
   });
 
@@ -26,6 +30,8 @@ class DoctorsLoaded extends DoctorsState {
     List<DoctorModel>? filteredDoctors,
     List<String>? specializations,
     String? selectedSpecialization,
+    List<String>? cities,
+    String? selectedCity,
     String? searchQuery,
   }) {
     return DoctorsLoaded(
@@ -34,6 +40,8 @@ class DoctorsLoaded extends DoctorsState {
       specializations: specializations ?? this.specializations,
       selectedSpecialization:
           selectedSpecialization ?? this.selectedSpecialization,
+      cities: cities ?? this.cities,
+      selectedCity: selectedCity ?? this.selectedCity,
       searchQuery: searchQuery ?? this.searchQuery,
     );
   }

@@ -214,8 +214,8 @@ class _ClinicsLocationsScreenContentState
                         ),
                         const SizedBox(height: 14),
 
-                        // City Filter Chips (matching website)
-                        if (cities.length > 2) ...[
+                        // City Filter Chips (Dynamic from branches API)
+                        if (cities.length > 1) ...[
                           Row(
                             children: [
                               const Text(
@@ -445,9 +445,6 @@ class _ClinicsLocationsScreenContentState
   }
 
   Widget _buildBranchCard(BuildContext context, BranchModel branch) {
-    final monSat = branch.workingHoursMonSat ?? 'Mon–Sat: 8:00 AM – 10:00 PM';
-    final sun = branch.workingHoursSun ?? 'Sun: 10:00 AM – 8:00 PM';
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -593,7 +590,7 @@ class _ClinicsLocationsScreenContentState
                       child: Text(
                         branch.address.isNotEmpty
                             ? branch.address
-                            : 'Karachi Lab Healthcare Facility, ${branch.city}',
+                            : 'Healthcare Facility, ${branch.city}',
                         style: const TextStyle(
                           fontFamily: 'DM Sans',
                           fontSize: 12,
@@ -606,76 +603,103 @@ class _ClinicsLocationsScreenContentState
                 ),
                 const SizedBox(height: 10),
 
-                // Phone (tap to dial)
-                if (branch.phone.isNotEmpty) ...[
-                  GestureDetector(
-                    onTap: () => _callBranch(context, branch.phone),
-                    behavior: HitTestBehavior.opaque,
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.phone_in_talk_rounded,
-                          size: 15,
-                          color: Color(0xFF0D9488),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          branch.phone,
-                          style: const TextStyle(
-                            fontFamily: 'DM Sans',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF0D9488),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
+                // Phone numbers (Split on "/" and show as two tappable call buttons)
+                if (branch.phoneList.isNotEmpty) ...[
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: branch.phoneList.map((ph) {
+                      return GestureDetector(
+                        onTap: () => _callBranch(context, ph),
+                        child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                            horizontal: 10,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF0D9488).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Call',
-                            style: TextStyle(
-                              fontFamily: 'DM Sans',
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF0D9488),
+                            color: const Color(0xFF0D9488).withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.25),
                             ),
                           ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.phone_in_talk_rounded,
+                                size: 14,
+                                color: Color(0xFF0D9488),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                ph,
+                                style: const TextStyle(
+                                  fontFamily: 'DM Sans',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0D9488),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1.5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0D9488),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  'Call',
+                                  style: TextStyle(
+                                    fontFamily: 'DM Sans',
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(height: 10),
                 ],
 
-                // Working Hours
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      size: 15,
-                      color: AppColors.secondary,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        '$monSat • $sun',
-                        style: const TextStyle(
-                          fontFamily: 'DM Sans',
-                          fontSize: 11,
-                          color: AppColors.secondary,
+                // Working Hours (Hide gracefully when empty)
+                if (branch.hasWorkingHours) ...[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.access_time_rounded,
+                        size: 15,
+                        color: AppColors.secondary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          [
+                            if (branch.workingHoursMonSat != null && branch.workingHoursMonSat!.trim().isNotEmpty)
+                              branch.workingHoursMonSat!,
+                            if (branch.workingHoursSun != null && branch.workingHoursSun!.trim().isNotEmpty)
+                              branch.workingHoursSun!,
+                          ].join(' • '),
+                          style: const TextStyle(
+                            fontFamily: 'DM Sans',
+                            fontSize: 11,
+                            color: AppColors.secondary,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
 
                 // Services Chips (if any)
                 if (branch.services.isNotEmpty) ...[

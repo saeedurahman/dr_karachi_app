@@ -14,6 +14,7 @@ class ApiConstants {
   static const String products = '/pharmacy/products/';
   static const String pharmacyCategories = '/pharmacy/categories/';
   static const String labTests = '/lab-tests';
+  static const String labCategories = '/lab-tests/categories';
   static const String labReports = '/lab-reports';
   static const String appointments = '/appointments';
   static const String reviews = '/reviews';

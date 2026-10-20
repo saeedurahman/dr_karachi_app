@@ -129,52 +129,67 @@ class HealthcarePillars extends StatelessWidget {
     LabTestModel(
       id: 'lt1',
       name: 'Complete Blood Count (CBC)',
-      code: 'LAB-CBC',
+      code: '0101',
       description: 'Comprehensive evaluation of blood cells – RBCs, WBCs, platelets.',
       price: 650.0,
       homeSamplingAvailable: true,
       homeSamplingFee: 0.0,
       turnaroundHours: 24,
+      category: 'Hematology',
+      specimen: 'EDTA Blood (Whole Blood)',
+      reportingTime: 'After 1 day(s)',
     ),
     LabTestModel(
       id: 'lt2',
       name: 'Lipid Profile Panel',
-      code: 'LAB-LIPID',
+      code: '0102',
       description: 'Cholesterol, triglycerides, HDL and LDL measurement panel.',
       price: 1200.0,
       homeSamplingAvailable: true,
       homeSamplingFee: 0.0,
       turnaroundHours: 24,
+      category: 'Chemical Pathology',
+      specimen: 'Clotted Blood / Serum',
+      reportingTime: 'Same Day',
     ),
     LabTestModel(
       id: 'lt3',
-      name: 'Thyroid Panel (TSH)',
-      code: 'LAB-TSH',
-      description: 'Thyroid stimulating hormone test for thyroid function assessment.',
-      price: 900.0,
+      name: '17-OH Progesterone',
+      code: '0302',
+      description: 'Quantitative serum test for congenital adrenal hyperplasia.',
+      price: 5500.0,
       homeSamplingAvailable: true,
       homeSamplingFee: 0.0,
-      turnaroundHours: 48,
+      turnaroundHours: 24,
+      category: 'Special Chemistry',
+      specimen: '3-5cc Clotted Blood or Serum',
+      reportingTime: 'After 1 day(s)',
     ),
     LabTestModel(
       id: 'lt4',
       name: 'Fasting Blood Sugar (FBS)',
-      code: 'LAB-FBS',
+      code: '0104',
       description: 'Glucose measurement after 8 hours of fasting – diabetes monitoring.',
       price: 350.0,
       homeSamplingAvailable: true,
       homeSamplingFee: 0.0,
       turnaroundHours: 12,
+      category: 'Chemical Pathology',
+      specimen: 'Fluoride / Plasma',
+      reportingTime: 'Same Day',
     ),
     LabTestModel(
       id: 'lt6',
       name: 'HbA1c (Glycated Haemoglobin)',
-      code: 'LAB-HBA1C',
+      code: '0106',
       description: '3-month average blood sugar – essential diabetes management test.',
       price: 1500.0,
       homeSamplingAvailable: true,
       homeSamplingFee: 0.0,
       turnaroundHours: 24,
+      category: 'Chemical Pathology',
+      specimen: 'Whole Blood EDTA',
+      reportingTime: 'Same Day',
     ),
   ];
 
@@ -1052,13 +1067,11 @@ class HealthcarePillars extends StatelessWidget {
           child: Container(
             height: 42,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0F766E), Color(0xFF0D9488)],
-              ),
+              gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.circular(999),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF0D9488).withValues(alpha: 0.28),
+                  color: AppColors.primaryAccent.withValues(alpha: 0.28),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),
@@ -1535,26 +1548,38 @@ class HealthcarePillars extends StatelessWidget {
               const SizedBox(width: 8),
               _buildLabCategoryChip(
                 context,
-                'Routine Blood',
+                'Hematology',
                 Icons.water_drop_rounded,
               ),
               const SizedBox(width: 8),
               _buildLabCategoryChip(
                 context,
-                'Diabetes Panel',
+                'Chemical Pathology',
                 Icons.monitor_heart_rounded,
               ),
               const SizedBox(width: 8),
               _buildLabCategoryChip(
                 context,
-                'Thyroid & Hormones',
-                Icons.healing_rounded,
+                'Special Chemistry',
+                Icons.science_rounded,
               ),
               const SizedBox(width: 8),
               _buildLabCategoryChip(
                 context,
-                'Home Sampling',
-                Icons.home_work_rounded,
+                'Microbiology',
+                Icons.bubble_chart_rounded,
+              ),
+              const SizedBox(width: 8),
+              _buildLabCategoryChip(
+                context,
+                'Molecular Biology',
+                Icons.grain_rounded,
+              ),
+              const SizedBox(width: 8),
+              _buildLabCategoryChip(
+                context,
+                'Blood Bank',
+                Icons.bloodtype_rounded,
               ),
             ],
           ),
@@ -1659,7 +1684,7 @@ class HealthcarePillars extends StatelessWidget {
                     Text(
                       branchName != null && branchName!.isNotEmpty
                           ? 'Certified phlebotomist at doorstep • $branchName'
-                          : 'Certified phlebotomist at doorstep across Quetta',
+                          : 'Certified phlebotomist at doorstep across Balochistan',
                       style: TextStyle(
                         fontFamily: 'DM Sans',
                         fontSize: 10,
@@ -1680,13 +1705,11 @@ class HealthcarePillars extends StatelessWidget {
           child: Container(
             height: 42,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0369A1), Color(0xFF0284C7)],
-              ),
+              gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.circular(999),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF0284C7).withValues(alpha: 0.28),
+                  color: AppColors.primaryAccent.withValues(alpha: 0.28),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),

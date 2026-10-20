@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/stat_count_up_text.dart';
+import '../../../lab/presentation/widgets/lab_accreditations_sheet.dart';
 
 /// Legacy & Trust card at the bottom of the Home Screen,
 /// fully aligned with the website's "60+ Years of Trust — A Legacy Worth Believing In" section.
@@ -127,9 +129,9 @@ class TrustFooter extends StatelessWidget {
           ),
           const SizedBox(height: 10),
 
-          // 3. Descriptive Text
+          // 3. Descriptive Text (Balochistan updated)
           const Text(
-            'For over 60 years, we have been delivering trusted healthcare to families across Quetta and beyond. A journey built on the health and confidence of hundreds of thousands of people.',
+            'For over 60 years, we have been delivering trusted healthcare to families across Balochistan and beyond. A journey built on the health and confidence of hundreds of thousands of people.',
             style: TextStyle(
               fontFamily: 'DM Sans',
               fontSize: 11.5,
@@ -140,13 +142,13 @@ class TrustFooter extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // 4. Mini Stats Grid (2x2)
+          // 4. Mini Stats Grid (2x2) with Count-Up Animation (100,000+ monthly tests)
           Row(
             children: [
               Expanded(
                 child: _buildStatCard(
-                  value: '5+',
-                  label: 'Active Branches',
+                  value: '5',
+                  label: 'Centres in Balochistan',
                   icon: Icons.storefront_rounded,
                 ),
               ),
@@ -164,9 +166,10 @@ class TrustFooter extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildStatCard(
-                  value: '500+',
-                  label: 'Lab Tests Available',
+                child: _buildCountUpStatCard(
+                  target: 100000,
+                  suffix: '+',
+                  label: 'Lab tests processed monthly',
                   icon: Icons.science_rounded,
                 ),
               ),
@@ -184,19 +187,12 @@ class TrustFooter extends StatelessWidget {
           const Divider(color: Color(0xFFF1F5F9), height: 1),
           const SizedBox(height: 14),
 
-          // 5. Trust Pillars (Genuine Medicines, Certified Lab, Expert Doctors)
+          // 5. Trust Pillars (Genuine Medicines, Expert Doctors)
           _buildPillarRow(
             icon: Icons.shield_rounded,
             iconColor: const Color(0xFFC92A2A),
             title: '100% Genuine Medicines',
             subtitle: 'DRAP-approved & directly manufacturer sourced',
-          ),
-          const SizedBox(height: 10),
-          _buildPillarRow(
-            icon: Icons.biotech_rounded,
-            iconColor: const Color(0xFF0284C7),
-            title: 'Certified Diagnostic Labs',
-            subtitle: 'Accredited testing & verified pathologist reports',
           ),
           const SizedBox(height: 10),
           _buildPillarRow(
@@ -207,7 +203,53 @@ class TrustFooter extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // 6. Bottom Quetta Presence Footer Bar
+          // 6. Certifications Section (Six certifications, names only, check/shield icon)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFF1F5F9)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.verified_rounded,
+                      size: 14,
+                      color: Color(0xFF0284C7),
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'Accreditations & Certifications',
+                      style: TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.structuralNavy,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: LabAccreditation.certificationNames.map((name) {
+                    return CertificationBadge(
+                      name: name,
+                      compact: true,
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // 7. Bottom Balochistan Presence Footer Bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
             decoration: BoxDecoration(
@@ -225,7 +267,7 @@ class TrustFooter extends StatelessWidget {
                 SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    'Karachi Laboratory & Pharmacy · 5 Branches in Quetta',
+                    'Karachi Laboratory & Pharmacy · 5 Centres across Balochistan',
                     style: TextStyle(
                       fontFamily: 'DM Sans',
                       fontSize: 10.5,
@@ -302,6 +344,81 @@ class TrustFooter extends StatelessWidget {
                   style: const TextStyle(
                     fontFamily: 'DM Sans',
                     fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF64748B),
+                    height: 1.1,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCountUpStatCard({
+    required int target,
+    required String suffix,
+    required String label,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFF1F5F9),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF1F2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 15,
+              color: const Color(0xFFC92A2A),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                StatCountUpText(
+                  target: target,
+                  suffix: suffix,
+                  style: const TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFC92A2A),
+                    height: 1.1,
+                  ),
+                ),
+                const SizedBox(height: 1),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: 'DM Sans',
+                    fontSize: 9.5,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF64748B),
                     height: 1.1,

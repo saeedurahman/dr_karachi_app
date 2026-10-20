@@ -1,6 +1,6 @@
-import '../../../home/data/models/lab_test_model.dart';
 import '../../domain/repositories/lab_repository.dart';
 import '../datasources/lab_remote_data_source.dart';
+import '../models/lab_tests_page_response.dart';
 
 class LabRepositoryImpl implements LabRepository {
   final LabRemoteDataSource remoteDataSource;
@@ -8,6 +8,21 @@ class LabRepositoryImpl implements LabRepository {
   LabRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<List<LabTestModel>> getLabTests({String? branchId, String? search}) =>
-      remoteDataSource.getLabTests(branchId: branchId, search: search);
+  Future<LabTestsPageResponse> getLabTests({
+    int page = 1,
+    int limit = 20,
+    String? search,
+    String? category,
+    String? branchId,
+  }) =>
+      remoteDataSource.getLabTests(
+        page: page,
+        limit: limit,
+        search: search,
+        category: category,
+        branchId: branchId,
+      );
+
+  @override
+  Future<List<String>> getCategories() => remoteDataSource.getCategories();
 }

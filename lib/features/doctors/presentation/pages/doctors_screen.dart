@@ -130,6 +130,75 @@ class _DoctorsScreenContentState extends State<_DoctorsScreenContent> {
                       _buildSearchBar(),
                       const SizedBox(height: 12),
 
+                      // City Filter Chips (Dynamic from Branches)
+                      BlocBuilder<DoctorsCubit, DoctorsState>(
+                        builder: (context, state) {
+                          if (state is DoctorsLoaded && state.cities.length > 1) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 32,
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: state.cities.length,
+                                    separatorBuilder: (_, _) =>
+                                        const SizedBox(width: 8),
+                                    itemBuilder: (context, index) {
+                                      final city = state.cities[index];
+                                      final isSelected =
+                                          state.selectedCity == city;
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<DoctorsCubit>()
+                                              .selectCity(city);
+                                        },
+                                        child: AnimatedContainer(
+                                          duration: const Duration(milliseconds: 200),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.primaryAccent
+                                                : Colors.white,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(
+                                              color: isSelected
+                                                  ? AppColors.primaryAccent
+                                                  : AppColors.structuralNavy
+                                                      .withValues(alpha: 0.12),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            city,
+                                            style: TextStyle(
+                                              fontFamily: 'DM Sans',
+                                              fontSize: 11.5,
+                                              fontWeight: isSelected
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w500,
+                                              color: isSelected
+                                                  ? Colors.white
+                                                  : AppColors.structuralNavy,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+
                       // Specialization Pills Filter
                       BlocBuilder<DoctorsCubit, DoctorsState>(
                         builder: (context, state) {

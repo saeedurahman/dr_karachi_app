@@ -31,15 +31,15 @@ class BranchModel {
 
     String? parseDayValue(dynamic val) {
       if (val == null) return null;
-      if (val is String) return val;
-      if (val is Map) {
+      if (val is String && val.trim().isNotEmpty) return val.trim();
+      if (val is Map && val.isNotEmpty) {
         final open = val['open'];
         final close = val['close'];
         if (open != null && close != null) {
           return '$open - $close';
         }
       }
-      return val.toString();
+      return null;
     }
 
     if (json['working_hours'] is Map) {
@@ -55,11 +55,10 @@ class BranchModel {
       }
     }
 
-
     return BranchModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      city: json['city'] as String? ?? 'Karachi',
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      city: json['city'] as String? ?? 'Quetta',
       address: json['address'] as String? ?? '',
       phone: json['phone'] as String? ?? '',
       email: json['email'] as String?,
@@ -74,13 +73,29 @@ class BranchModel {
     );
   }
 
-  /// Real google_maps_url when available, otherwise a directions link built from the address.
+  /// Split compound phone numbers e.g. "0319-1353930 / 0310-8665561" into separate tappable numbers
+  List<String> get phoneList {
+    if (phone.trim().isEmpty) return const [];
+    return phone
+        .split('/')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+  }
+
+  /// Whether any working hours are defined
+  bool get hasWorkingHours {
+    final ms = workingHoursMonSat?.trim();
+    final s = workingHoursSun?.trim();
+    return (ms != null && ms.isNotEmpty) || (s != null && s.isNotEmpty);
+  }
+
+  /// Returns real Google Maps URL when available, otherwise falls back to a Google Maps search query
   String getDirectionsUrl() {
     if (googleMapsUrl != null && googleMapsUrl!.trim().isNotEmpty) {
       return googleMapsUrl!;
     }
-    final query = '$name, $address';
-    return 'https://www.google.com/maps/dir/?api=1&destination=${Uri.encodeComponent(query)}';
+    final query = address.trim().isNotEmpty ? '$name, $address' : '$name, $city';
+    return 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}';
   }
 }
-

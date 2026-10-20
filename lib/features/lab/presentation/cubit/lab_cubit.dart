@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../home/data/models/lab_test_model.dart';
 import '../../domain/repositories/lab_repository.dart';
 import 'lab_state.dart';
 
@@ -9,86 +8,177 @@ class LabCubit extends Cubit<LabState> {
   LabCubit({required this.repository}) : super(LabInitial());
 
   String? _currentBranchId;
+  static const int _pageSize = 20;
 
   Future<void> loadLabTests({String? branchId}) async {
     if (branchId != null) _currentBranchId = branchId;
     emit(LabLoading());
 
     try {
-      final tests = await repository.getLabTests(branchId: _currentBranchId);
+      // Fetch initial page 1
+      final res = await repository.getLabTests(
+        page: 1,
+        limit: _pageSize,
+        branchId: _currentBranchId,
+      );
+
+      // Merge categories from response and categories endpoint if needed
+      List<String> categories = ['All'];
+      if (res.categories.isNotEmpty) {
+        for (final c in res.categories) {
+          if (!categories.contains(c)) categories.add(c);
+        }
+      } else {
+        try {
+          final fetchedCats = await repository.getCategories();
+          for (final c in fetchedCats) {
+            if (!categories.contains(c)) categories.add(c);
+          }
+        } catch (_) {}
+      }
+
       if (isClosed) return;
+
       emit(LabLoaded(
-        allTests: tests,
-        filteredTests: tests,
+        tests: res.items,
+        categories: categories,
         selectedCategory: 'All',
         searchQuery: '',
+        page: res.page,
+        limit: _pageSize,
+        total: res.total,
+        hasMore: res.page < res.pages,
       ));
     } catch (_) {
       if (isClosed) return;
-      emit(LabError('Failed to load diagnostic lab tests. Please try again.'));
+      emit(LabError('Failed to load diagnostic lab tests. Please check connection and try again.'));
     }
   }
 
-  void selectCategory(String category) {
+  Future<void> loadMore() async {
+    final currentState = state;
+    if (currentState is! LabLoaded) return;
+    if (!currentState.hasMore || currentState.isLoadingMore || currentState.isFiltering) return;
+
+    emit(currentState.copyWith(isLoadingMore: true));
+
+    try {
+      final nextPage = currentState.page + 1;
+      final res = await repository.getLabTests(
+        page: nextPage,
+        limit: currentState.limit,
+        search: currentState.searchQuery,
+        category: currentState.selectedCategory == 'All' ? null : currentState.selectedCategory,
+        branchId: _currentBranchId,
+      );
+
+      if (isClosed) return;
+
+      // Deduplicate items by ID
+      final existingIds = currentState.tests.map((t) => t.id).toSet();
+      final newItems = res.items.where((t) => !existingIds.contains(t.id)).toList();
+
+      emit(currentState.copyWith(
+        tests: [...currentState.tests, ...newItems],
+        page: nextPage,
+        total: res.total,
+        hasMore: nextPage < res.pages,
+        isLoadingMore: false,
+      ));
+    } catch (_) {
+      if (isClosed) return;
+      emit(currentState.copyWith(isLoadingMore: false));
+    }
+  }
+
+  Future<void> selectCategory(String category) async {
+    final currentState = state;
+    if (currentState is! LabLoaded) return;
+    if (currentState.selectedCategory == category && !currentState.isFiltering) return;
+
+    emit(currentState.copyWith(selectedCategory: category, isFiltering: true));
+
+    try {
+      final res = await repository.getLabTests(
+        page: 1,
+        limit: _pageSize,
+        search: currentState.searchQuery,
+        category: category == 'All' ? null : category,
+        branchId: _currentBranchId,
+      );
+
+      if (isClosed) return;
+
+      emit(currentState.copyWith(
+        tests: res.items,
+        selectedCategory: category,
+        page: 1,
+        total: res.total,
+        hasMore: 1 < res.pages,
+        isFiltering: false,
+      ));
+    } catch (_) {
+      if (isClosed) return;
+      emit(currentState.copyWith(isFiltering: false));
+    }
+  }
+
+  Future<void> search(String query) async {
     final currentState = state;
     if (currentState is! LabLoaded) return;
 
-    final filtered = _applyFilters(
-      currentState.allTests,
-      category,
-      currentState.searchQuery,
-    );
+    emit(currentState.copyWith(searchQuery: query, isFiltering: true));
 
-    emit(currentState.copyWith(
-      selectedCategory: category,
-      filteredTests: filtered,
-    ));
-  }
+    try {
+      final res = await repository.getLabTests(
+        page: 1,
+        limit: _pageSize,
+        search: query.trim().isEmpty ? null : query.trim(),
+        category: currentState.selectedCategory == 'All' ? null : currentState.selectedCategory,
+        branchId: _currentBranchId,
+      );
 
-  void search(String query) {
-    final currentState = state;
-    if (currentState is! LabLoaded) return;
+      if (isClosed) return;
 
-    final filtered = _applyFilters(
-      currentState.allTests,
-      currentState.selectedCategory ?? 'All',
-      query,
-    );
-
-    emit(currentState.copyWith(
-      searchQuery: query,
-      filteredTests: filtered,
-    ));
-  }
-
-  List<LabTestModel> _applyFilters(
-    List<LabTestModel> tests,
-    String category,
-    String query,
-  ) {
-    return tests.where((test) {
-      final matchesSearch = query.trim().isEmpty ||
-          test.name.toLowerCase().contains(query.trim().toLowerCase()) ||
-          test.code.toLowerCase().contains(query.trim().toLowerCase()) ||
-          (test.description?.toLowerCase().contains(query.trim().toLowerCase()) ?? false);
-
-      if (!matchesSearch) return false;
-
-      if (category == 'Home Sampling') {
-        return test.homeSamplingAvailable;
-      } else if (category == 'Packages') {
-        return test.code.toLowerCase().contains('pkg') ||
-            test.name.toLowerCase().contains('package') ||
-            test.name.toLowerCase().contains('profile');
-      } else if (category == 'Fast Reports') {
-        return (test.turnaroundHours ?? 24) <= 12;
-      }
-
-      return true; // 'All'
-    }).toList();
+      emit(currentState.copyWith(
+        tests: res.items,
+        searchQuery: query,
+        page: 1,
+        total: res.total,
+        hasMore: 1 < res.pages,
+        isFiltering: false,
+      ));
+    } catch (_) {
+      if (isClosed) return;
+      emit(currentState.copyWith(isFiltering: false));
+    }
   }
 
   Future<void> refresh() async {
-    await loadLabTests(branchId: _currentBranchId);
+    final currentState = state;
+    if (currentState is LabLoaded) {
+      try {
+        final res = await repository.getLabTests(
+          page: 1,
+          limit: _pageSize,
+          search: currentState.searchQuery,
+          category: currentState.selectedCategory == 'All' ? null : currentState.selectedCategory,
+          branchId: _currentBranchId,
+        );
+
+        if (isClosed) return;
+
+        emit(currentState.copyWith(
+          tests: res.items,
+          page: 1,
+          total: res.total,
+          hasMore: 1 < res.pages,
+        ));
+      } catch (_) {
+        await loadLabTests(branchId: _currentBranchId);
+      }
+    } else {
+      await loadLabTests(branchId: _currentBranchId);
+    }
   }
 }
