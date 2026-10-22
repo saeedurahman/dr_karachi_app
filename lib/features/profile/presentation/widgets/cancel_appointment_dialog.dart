@@ -234,6 +234,7 @@ class _CancelAppointmentDialogState extends State<CancelAppointmentDialog> {
                 TextField(
                   controller: _reasonController,
                   maxLines: 2,
+                  maxLength: 500,
                   style: const TextStyle(
                     fontFamily: 'DM Sans',
                     fontSize: 12.5,
@@ -246,6 +247,7 @@ class _CancelAppointmentDialogState extends State<CancelAppointmentDialog> {
                       fontSize: 12,
                       color: AppColors.secondary,
                     ),
+                    counterText: '',
                     filled: true,
                     fillColor: const Color(0xFFF8FAFC),
                     border: OutlineInputBorder(

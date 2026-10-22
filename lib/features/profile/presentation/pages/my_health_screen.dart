@@ -811,12 +811,20 @@ class _MyHealthScreenState extends State<MyHealthScreen> {
                     appointment: appt,
                   );
                   if (cancelled == true) {
+                    if (mounted) {
+                      setState(() {
+                        final idx = _appointments.indexWhere((a) => a.id == appt.id);
+                        if (idx != -1) {
+                          _appointments[idx] = _appointments[idx].copyWith(status: 'cancelled');
+                        }
+                      });
+                    }
                     _fetchAppointments();
                     if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Appointment has been cancelled.'),
-                        backgroundColor: Color(0xFFDC2626),
+                        content: Text('Appointment has been cancelled successfully.'),
+                        backgroundColor: Color(0xFF059669),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );

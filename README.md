@@ -1,6 +1,6 @@
-# pharmacy_app
+# Karachi Pharmacy
 
-A new Flutter project.
+Official mobile application for Karachi Pharmacy.
 
 ## Getting Started
 

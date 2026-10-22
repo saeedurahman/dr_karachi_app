@@ -43,22 +43,76 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     String? cancellationReason,
   }) async {
     try {
-      await apiClient.dio.patch(
+      final trimmedReason = cancellationReason?.trim();
+      final reason = (trimmedReason != null && trimmedReason.isNotEmpty)
+          ? (trimmedReason.length > 500 ? trimmedReason.substring(0, 500) : trimmedReason)
+          : null;
+
+      final payload = <String, dynamic>{
+        'status': 'cancelled',
+      };
+      if (reason != null) {
+        payload['cancellation_reason'] = reason;
+      }
+
+      await apiClient.dio.put(
         '${ApiConstants.appointments}/$appointmentId/status',
-        data: {
-          'status': 'cancelled',
-          if (cancellationReason != null && cancellationReason.trim().isNotEmpty)
-            'cancellation_reason': cancellationReason.trim(),
-        },
+        data: payload,
       );
     } on DioException catch (e) {
-      String message = 'Failed to cancel appointment';
-      if (e.response?.data is Map && e.response?.data['detail'] != null) {
-        message = e.response!.data['detail'].toString();
+      final statusCode = e.response?.statusCode;
+      String? backendDetail;
+      if (e.response?.data is Map) {
+        final d = e.response!.data['detail'];
+        if (d is String && d.trim().isNotEmpty) {
+          backendDetail = d.trim();
+        } else if (d is List && d.isNotEmpty) {
+          final first = d.first;
+          if (first is Map && first['msg'] != null) {
+            backendDetail = first['msg'].toString();
+          }
+        }
+      }
+
+      String message;
+      switch (statusCode) {
+        case 400:
+          if (backendDetail != null &&
+              !backendDetail.toLowerCase().contains('not allowed')) {
+            message = backendDetail;
+          } else {
+            message = 'This appointment can no longer be cancelled.';
+          }
+          break;
+        case 403:
+          message = 'You are not authorized to cancel this appointment.';
+          break;
+        case 404:
+          message = 'Appointment not found or already removed.';
+          break;
+        case 405:
+          message = 'Cancellation method not allowed by server.';
+          break;
+        case 409:
+          message = 'This appointment can no longer be cancelled.';
+          break;
+        case 422:
+          message = backendDetail != null
+              ? 'Invalid request: $backendDetail'
+              : 'Invalid cancellation request. Please check and try again.';
+          break;
+        default:
+          if (backendDetail != null &&
+              !backendDetail.toLowerCase().contains('not allowed')) {
+            message = backendDetail;
+          } else {
+            message = 'Failed to cancel appointment. Please try again.';
+          }
+          break;
       }
       throw Exception(message);
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception(e.toString().replaceFirst('Exception: ', ''));
     }
   }
 

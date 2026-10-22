@@ -15,9 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Dr. Karachi</string>
-	<key>CFBundleDisplayName</key>
-	<string>Dr. Karachi</string>
+	<string>Karachi Pharmacy</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

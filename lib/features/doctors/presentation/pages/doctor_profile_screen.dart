@@ -495,7 +495,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   Widget _buildAboutDoctorCard() {
     final bioText = (widget.doctor.bio != null && widget.doctor.bio!.trim().isNotEmpty)
         ? widget.doctor.bio!.trim()
-        : 'Senior medical specialist dedicated to providing personalized clinical consultation and evidence-based treatment at Dr. Karachi clinics.';
+        : 'Senior medical specialist dedicated to providing personalized clinical consultation and evidence-based treatment at Karachi Pharmacy clinics.';
 
     return Container(
       width: double.infinity,

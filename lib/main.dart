@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Dr Karachi Mobile Healthcare',
+        title: 'Karachi Pharmacy',
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.light,
         theme: AppTheme.lightTheme,

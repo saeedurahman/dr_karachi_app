@@ -81,5 +81,35 @@ class PatientAppointmentModel {
     );
   }
 
+  PatientAppointmentModel copyWith({
+    String? id,
+    DateTime? slotDatetime,
+    String? status,
+    String? notes,
+    String? cancellationReason,
+    String? doctorName,
+    String? doctorSpecialization,
+    double? doctorFee,
+    String? branchName,
+    String? branchCity,
+    String? branchAddress,
+    DateTime? createdAt,
+  }) {
+    return PatientAppointmentModel(
+      id: id ?? this.id,
+      slotDatetime: slotDatetime ?? this.slotDatetime,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+      cancellationReason: cancellationReason ?? this.cancellationReason,
+      doctorName: doctorName ?? this.doctorName,
+      doctorSpecialization: doctorSpecialization ?? this.doctorSpecialization,
+      doctorFee: doctorFee ?? this.doctorFee,
+      branchName: branchName ?? this.branchName,
+      branchCity: branchCity ?? this.branchCity,
+      branchAddress: branchAddress ?? this.branchAddress,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   bool get canCancel => status == 'pending' || status == 'confirmed';
 }
