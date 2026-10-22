@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -52,28 +54,24 @@ class ProductCard extends StatelessWidget {
                     children: [
                       // Product Image Container
                       Center(
-                        child:
-                            product.imageUrl != null &&
+                        child: product.imageUrl != null &&
                                 product.imageUrl!.isNotEmpty
-                            ? Image.network(
-                                product.imageUrl!,
+                            ? CachedNetworkImage(
+                                imageUrl: product.imageUrl!,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, _, _) => _buildPlaceholder(),
-                                loadingBuilder: (_, child, progress) {
-                                  if (progress == null) return child;
-                                  return const Center(
-                                    child: SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation(
-                                          AppColors.primaryAccent,
-                                        ),
+                                placeholder: (context, url) => const Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation(
+                                        AppColors.primaryAccent,
                                       ),
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => _buildPlaceholder(),
                               )
                             : _buildPlaceholder(),
                       ),
@@ -230,7 +228,9 @@ class ProductCard extends StatelessWidget {
         product.stockAtBranch != null && product.stockAtBranch! <= 0;
 
     if (isOutOfStock) {
-      debugPrint('[ProductCard] "${product.name}" is marked Unavailable/OutOfStock (stock: ${product.stockAtBranch})');
+      if (kDebugMode) {
+        debugPrint('[ProductCard] "${product.name}" is marked Unavailable/OutOfStock (stock: ${product.stockAtBranch})');
+      }
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
@@ -253,14 +253,20 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: isAdding
           ? () {
-              debugPrint('[ProductCard] Add tapped while isAdding is true for "${product.name}" (ignored)');
+              if (kDebugMode) {
+                debugPrint('[ProductCard] Add tapped while isAdding is true for "${product.name}" (ignored)');
+              }
             }
           : () {
-              debugPrint('[ProductCard] Add button tapped for: "${product.name}" (ID: ${product.id})');
+              if (kDebugMode) {
+                debugPrint('[ProductCard] Add button tapped for: "${product.name}" (ID: ${product.id})');
+              }
               if (onAddToCart != null) {
                 onAddToCart!();
               } else {
-                debugPrint('[ProductCard] ERROR: onAddToCart callback is null for "${product.name}"');
+                if (kDebugMode) {
+                  debugPrint('[ProductCard] ERROR: onAddToCart callback is null for "${product.name}"');
+                }
               }
             },
       child: Container(

@@ -369,7 +369,7 @@ class _DoctorsScreenContentState extends State<_DoctorsScreenContent> {
                     }
 
                     return SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 90),
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {

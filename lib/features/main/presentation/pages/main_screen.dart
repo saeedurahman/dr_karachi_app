@@ -66,15 +66,20 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildGlassBottomNav() {
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: bottomInset > 0 ? bottomInset + 6 : 20,
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
           child: Container(
-            height: 72,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 68,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.72), // Tier 2 Glassmorphic Float
               borderRadius: BorderRadius.circular(30),
@@ -88,13 +93,12 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(0, AppIcons.home, 'Home'),
-                _buildNavItem(1, AppIcons.pharmacy, 'Pharmacy'),
-                _buildNavItem(2, AppIcons.doctor, 'Doctors'),
-                _buildNavItem(3, AppIcons.lab, 'Lab Tests'),
-                _buildNavItem(4, AppIcons.health, 'My Health'),
+                Expanded(child: _buildNavItem(0, AppIcons.home, 'Home')),
+                Expanded(child: _buildNavItem(1, AppIcons.pharmacy, 'Pharmacy')),
+                Expanded(child: _buildNavItem(2, AppIcons.doctor, 'Doctors')),
+                Expanded(child: _buildNavItem(3, AppIcons.lab, 'Lab Tests')),
+                Expanded(child: _buildNavItem(4, AppIcons.health, 'My Health')),
               ],
             ),
           ),
@@ -111,43 +115,46 @@ class _MainScreenState extends State<MainScreen> {
       onTap: () => setState(() => _currentIndex = index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 16 : 12,
-          vertical: 8,
+        margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 4,
+          vertical: 4,
         ),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primaryAccent.withValues(alpha: 0.12) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
-              scale: isSelected ? 1.1 : 1.0,
-              duration: const Duration(milliseconds: 250),
+              scale: isSelected ? 1.05 : 1.0,
+              duration: const Duration(milliseconds: 200),
               child: SvgPicture.string(
                 svgData,
-                width: 22,
-                height: 22,
+                width: 20,
+                height: 20,
                 colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
               ),
             ),
             AnimatedSize(
-              duration: const Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               child: isSelected
                   ? Padding(
-                      padding: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.only(top: 2),
                       child: Text(
                         label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: color,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.1,
                         ),
                       ),
                     )

@@ -22,10 +22,14 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Future<List<BranchModel>> getBranches() async {
-    debugPrint('[HomeRemoteDataSource] Fetching branches from: ${ApiConstants.branches}');
+    if (kDebugMode) {
+      debugPrint('[HomeRemoteDataSource] Fetching branches from: ${ApiConstants.branches}');
+    }
     try {
       final res = await apiClient.dio.get(ApiConstants.branches);
-      debugPrint('[HomeRemoteDataSource] Branches response status: ${res.statusCode}');
+      if (kDebugMode) {
+        debugPrint('[HomeRemoteDataSource] Branches response status: ${res.statusCode}');
+      }
 
       List<dynamic> list = [];
       if (res.data is Map && res.data['items'] != null) {
@@ -34,24 +38,32 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         list = res.data as List<dynamic>;
       }
 
-      debugPrint('[HomeRemoteDataSource] Found ${list.length} raw branch items in response');
+      if (kDebugMode) {
+        debugPrint('[HomeRemoteDataSource] Found ${list.length} raw branch items in response');
+      }
       final branches = <BranchModel>[];
       for (var i = 0; i < list.length; i++) {
         try {
           final b = BranchModel.fromJson(list[i] as Map<String, dynamic>);
           branches.add(b);
-          debugPrint('[HomeRemoteDataSource] -> Parsed branch: ${b.name} (${b.city})');
+          if (kDebugMode) {
+            debugPrint('[HomeRemoteDataSource] -> Parsed branch: ${b.name} (${b.city})');
+          }
         } catch (err, stack) {
-          debugPrint('[HomeRemoteDataSource] -> Error parsing branch at index $i: $err');
-          debugPrint('$stack');
+          if (kDebugMode) {
+            debugPrint('[HomeRemoteDataSource] -> Error parsing branch at index $i: $err\n$stack');
+          }
         }
       }
 
-      debugPrint('[HomeRemoteDataSource] Successfully loaded ${branches.length} branches');
+      if (kDebugMode) {
+        debugPrint('[HomeRemoteDataSource] Successfully loaded ${branches.length} branches');
+      }
       return branches;
     } catch (e, stack) {
-      debugPrint('[HomeRemoteDataSource] Failed to fetch branches: $e');
-      debugPrint('$stack');
+      if (kDebugMode) {
+        debugPrint('[HomeRemoteDataSource] Failed to fetch branches: $e\n$stack');
+      }
       return [];
     }
   }

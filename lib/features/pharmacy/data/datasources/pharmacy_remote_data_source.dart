@@ -172,21 +172,27 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
       'branch_id': branchId,
       'quantity': quantity,
     };
-    debugPrint('[PharmacyRemoteDataSource] POST ${ApiConstants.cartItems} with payload: $payload');
+    if (kDebugMode) {
+      debugPrint('[PharmacyRemoteDataSource] POST ${ApiConstants.cartItems} with payload: $payload');
+    }
     try {
       final res = await apiClient.dio.post(
         ApiConstants.cartItems,
         data: payload,
       );
-      debugPrint('[PharmacyRemoteDataSource] Response status: ${res.statusCode}');
-      debugPrint('[PharmacyRemoteDataSource] Response data: ${res.data}');
+      if (kDebugMode) {
+        debugPrint('[PharmacyRemoteDataSource] Response status: ${res.statusCode}');
+        debugPrint('[PharmacyRemoteDataSource] Response data: ${res.data}');
+      }
       return CartModel.fromJson(res.data as Map<String, dynamic>);
     } on DioException catch (e) {
-      debugPrint('[PharmacyRemoteDataSource] DioException caught:');
-      debugPrint('  Status code: ${e.response?.statusCode}');
-      debugPrint('  Response data: ${e.response?.data}');
-      debugPrint('  Message: ${e.message}');
-      debugPrint('  Type: ${e.type}');
+      if (kDebugMode) {
+        debugPrint('[PharmacyRemoteDataSource] DioException caught:');
+        debugPrint('  Status code: ${e.response?.statusCode}');
+        debugPrint('  Response data: ${e.response?.data}');
+        debugPrint('  Message: ${e.message}');
+        debugPrint('  Type: ${e.type}');
+      }
       if (e.response?.statusCode == 409) {
         final data = e.response?.data;
         if (data is Map<String, dynamic>) {
@@ -202,10 +208,14 @@ class PharmacyRemoteDataSourceImpl implements PharmacyRemoteDataSource {
           }
         }
       }
-      debugPrint('[PharmacyRemoteDataSource] Rethrowing DioException: $e');
+      if (kDebugMode) {
+        debugPrint('[PharmacyRemoteDataSource] Rethrowing DioException: $e');
+      }
       rethrow;
     } catch (e, stack) {
-      debugPrint('[PharmacyRemoteDataSource] Non-Dio exception: $e\n$stack');
+      if (kDebugMode) {
+        debugPrint('[PharmacyRemoteDataSource] Non-Dio exception: $e\n$stack');
+      }
       rethrow;
     }
   }

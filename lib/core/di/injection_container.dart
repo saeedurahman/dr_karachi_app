@@ -26,6 +26,10 @@ import '../../features/doctors/data/repositories/doctors_repository_impl.dart';
 import '../../features/doctors/domain/repositories/doctors_repository.dart';
 import '../../features/doctors/presentation/cubit/doctors_cubit.dart';
 import '../../features/profile/data/datasources/profile_remote_data_source.dart';
+import '../../features/forgot_password/data/datasources/forgot_password_remote_data_source.dart';
+import '../../features/forgot_password/data/repositories/forgot_password_repository_impl.dart';
+import '../../features/forgot_password/domain/repositories/forgot_password_repository.dart';
+import '../../features/forgot_password/presentation/cubit/forgot_password_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -74,7 +78,7 @@ Future<void> init() async {
 
   //! Features - Auth
   // Cubits
-  sl.registerFactory<AuthCubit>(() => AuthCubit(authRepository: sl()));
+  sl.registerLazySingleton<AuthCubit>(() => AuthCubit(authRepository: sl()));
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(
@@ -89,17 +93,38 @@ Future<void> init() async {
     () => AuthRemoteDataSourceImpl(apiClient: sl()),
   );
 
+  //! Features - Forgot Password
+  sl.registerFactory<ForgotPasswordCubit>(
+    () => ForgotPasswordCubit(repository: sl()),
+  );
+  sl.registerLazySingleton<ForgotPasswordRepository>(
+    () => ForgotPasswordRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<ForgotPasswordRemoteDataSource>(
+    () => ForgotPasswordRemoteDataSourceImpl(apiClient: sl()),
+  );
+
   //! Core
   sl.registerLazySingleton<SecureStorageService>(
     () => SecureStorageService(sl()),
   );
   sl.registerLazySingleton<ApiClient>(
-    () => ApiClient(dio: sl(), storageService: sl()),
+    () => ApiClient(
+      dio: sl(),
+      storageService: sl(),
+      onAuthExpired: () {
+        if (sl.isRegistered<AuthCubit>()) {
+          sl<AuthCubit>().forceUnauthenticated();
+        }
+      },
+    ),
   );
 
   //! External
   sl.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
+    () => const FlutterSecureStorage(
+      aOptions: AndroidOptions(resetOnError: true),
+    ),
   );
   sl.registerLazySingleton<Dio>(() => Dio());
 }

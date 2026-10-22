@@ -207,12 +207,88 @@ class _HomeScreenContent extends StatelessWidget {
                 ),
 
                 // â”€â”€ Scrollable Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      // 1. Welcome section
-                      _buildWelcomeSection(
+                if (state is HomeError)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 48,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 72,
+                              height: 72,
+                              decoration: BoxDecoration(
+                                color: AppColors.error.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.cloud_off_rounded,
+                                size: 36,
+                                color: AppColors.error,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            const Text(
+                              'Unable to load healthcare data',
+                              style: TextStyle(
+                                fontFamily: 'Plus Jakarta Sans',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.structuralNavy,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.message.isNotEmpty
+                                  ? state.message
+                                  : 'Please check your connection and try again.',
+                              style: const TextStyle(
+                                fontFamily: 'DM Sans',
+                                fontSize: 14,
+                                color: AppColors.secondary,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                context.read<HomeCubit>().loadHomeData(
+                                  branchId: selectedBranch?.id,
+                                );
+                              },
+                              icon: const Icon(Icons.refresh_rounded, size: 20),
+                              label: const Text('Try Again'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryAccent,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 100),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        // 1. Welcome section
+                        _buildWelcomeSection(
                         context,
                         userName: userName,
                         city: branchCity,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../data/models/appointment_model.dart';
@@ -135,10 +136,22 @@ class _AppointmentCardState extends State<AppointmentCard> {
       ),
       child: ClipOval(
         child: hasNetworkImage
-            ? Image.network(
-                doc.profileImageUrl!,
+            ? CachedNetworkImage(
+                imageUrl: doc.profileImageUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildFallbackAsset(localAsset),
+                placeholder: (context, url) => const Center(
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.5,
+                      valueColor: AlwaysStoppedAnimation(
+                        AppColors.primaryAccent,
+                      ),
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => _buildFallbackAsset(localAsset),
               )
             : _buildFallbackAsset(localAsset),
       ),

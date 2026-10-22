@@ -1,0 +1,7 @@
+# Android Release Keystore Configuration
+# Copy this file to 'android/key.properties' and fill in your actual passwords.
+# WARNING: Do NOT commit 'key.properties' with actual credentials into git.
+storePassword=YOUR_KEYSTORE_PASSWORD_HERE
+keyPassword=YOUR_KEY_PASSWORD_HERE
+keyAlias=drkarachi
+storeFile=D:\\flutter\\freee\\Dr_karachi_1\\documents\\drkarachi-release.jks

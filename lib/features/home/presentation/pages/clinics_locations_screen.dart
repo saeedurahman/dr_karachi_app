@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -129,10 +130,12 @@ class _ClinicsLocationsScreenContentState
               ? state.branches
               : widget.fallbackBranches;
 
-          debugPrint(
-            '[ClinicsLocationsScreen] Build with state: ${state.runtimeType}, '
-            'branches loaded: ${branches.length}, fallback: ${widget.fallbackBranches.length}',
-          );
+          if (kDebugMode) {
+            debugPrint(
+              '[ClinicsLocationsScreen] Build with state: ${state.runtimeType}, '
+              'branches loaded: ${branches.length}, fallback: ${widget.fallbackBranches.length}',
+            );
+          }
 
           final isLoading = state is HomeLoading && branches.isEmpty;
           final isError = state is HomeError && branches.isEmpty;

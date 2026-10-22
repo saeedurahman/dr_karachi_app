@@ -9,8 +9,8 @@ import '../../data/models/product_model.dart';
 import '../../../doctors/presentation/pages/doctor_profile_screen.dart';
 import '../../../doctors/presentation/pages/doctors_screen.dart';
 import '../../../lab/presentation/pages/lab_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../pharmacy/presentation/pages/pharmacy_screen.dart';
-import '../../../pharmacy/presentation/widgets/prescription_upload_modal.dart';
 import '../../../lab/presentation/widgets/book_lab_test_modal.dart';
 import '../../../lab/presentation/widgets/lab_accreditations_sheet.dart';
 import '../../../lab/presentation/widgets/lab_test_reviews_modal.dart';
@@ -39,192 +39,9 @@ class HealthcarePillars extends StatelessWidget {
     this.onShopPharmacy,
   });
 
-  static final List<ProductModel> _fallbackProducts = [
-    ProductModel(
-      id: 'prod-panadol-extra',
-      name: 'Panadol Extra 500mg (Paracetamol)',
-      sku: 'GSK-PDL-500',
-      originalPrice: 150.0,
-      discountPercent: 10.0,
-      discountedPrice: 135.0,
-      requiresPrescription: false,
-      stockAtBranch: 50,
-    ),
-    ProductModel(
-      id: 'prod-augmentin',
-      name: 'Augmentin 625mg Tablets',
-      sku: 'GSK-AUG-625',
-      originalPrice: 420.0,
-      discountPercent: 12.0,
-      discountedPrice: 369.0,
-      requiresPrescription: true,
-      stockAtBranch: 30,
-    ),
-    ProductModel(
-      id: 'prod-surbex-z',
-      name: 'Surbex Z Zinc & High Potency B-Complex',
-      sku: 'ABT-SRB-Z',
-      originalPrice: 580.0,
-      discountPercent: 15.0,
-      discountedPrice: 493.0,
-      requiresPrescription: false,
-      stockAtBranch: 25,
-    ),
-    ProductModel(
-      id: 'prod-cac-1000',
-      name: 'CaC-1000 Plus Effervescent Tablets',
-      sku: 'GSK-CAC-1000',
-      originalPrice: 495.0,
-      discountPercent: 8.0,
-      discountedPrice: 455.0,
-      requiresPrescription: false,
-      stockAtBranch: 40,
-    ),
-  ];
-
-  static final List<DoctorModel> _fallbackDoctors = [
-    DoctorModel(
-      id: 'doc-ahmed-siddiqui',
-      fullName: 'Dr. Ahmed Siddiqui',
-      specialization: 'Cardiologist',
-      qualification: 'MBBS, FCPS (Cardiology)',
-      experienceYears: 15,
-      consultationFee: 2500.0,
-      profileImageUrl: 'assets/images/doctors/doctor-ahmed-siddiqui.jpg',
-      bio: 'Consultant Interventional Cardiologist with 15+ years experience.',
-    ),
-    DoctorModel(
-      id: 'doc-nadia-hussain',
-      fullName: 'Dr. Nadia Hussain',
-      specialization: 'Dermatologist',
-      qualification: 'MBBS, MCPS (Dermatology)',
-      experienceYears: 12,
-      consultationFee: 2000.0,
-      profileImageUrl: 'assets/images/doctors/doctor-nadia-hussain.jpg',
-      bio: 'Expert Consultant Dermatologist and Clinical Cosmetologist.',
-    ),
-    DoctorModel(
-      id: 'doc-imran-chaudhry',
-      fullName: 'Dr. Imran Chaudhry',
-      specialization: 'Pediatrician',
-      qualification: 'MBBS, DCH, FCPS (Pediatrics)',
-      experienceYears: 18,
-      consultationFee: 1800.0,
-      profileImageUrl: 'assets/images/doctors/doctor-imran-chaudhry.jpg',
-      bio: 'Senior Consultant Child Specialist and Neonatologist.',
-    ),
-    DoctorModel(
-      id: 'doc-sara-malik',
-      fullName: 'Dr. Sara Malik',
-      specialization: 'General Physician',
-      qualification: 'MBBS, FCPS (Medicine)',
-      experienceYears: 10,
-      consultationFee: 1500.0,
-      profileImageUrl: 'assets/images/doctors/doctor-sara-malik.jpg',
-      bio: 'Consultant Physician specialized in adult preventive healthcare.',
-    ),
-  ];
-
-  static final List<LabTestModel> _fallbackLabTests = [
-    LabTestModel(
-      id: 'lt1',
-      name: 'Complete Blood Count (CBC)',
-      code: '0101',
-      description: 'Comprehensive evaluation of blood cells – RBCs, WBCs, platelets.',
-      price: 650.0,
-      homeSamplingAvailable: true,
-      homeSamplingFee: 0.0,
-      turnaroundHours: 24,
-      category: 'Hematology',
-      specimen: 'EDTA Blood (Whole Blood)',
-      reportingTime: 'After 1 day(s)',
-    ),
-    LabTestModel(
-      id: 'lt2',
-      name: 'Lipid Profile Panel',
-      code: '0102',
-      description: 'Cholesterol, triglycerides, HDL and LDL measurement panel.',
-      price: 1200.0,
-      homeSamplingAvailable: true,
-      homeSamplingFee: 0.0,
-      turnaroundHours: 24,
-      category: 'Chemical Pathology',
-      specimen: 'Clotted Blood / Serum',
-      reportingTime: 'Same Day',
-    ),
-    LabTestModel(
-      id: 'lt3',
-      name: '17-OH Progesterone',
-      code: '0302',
-      description: 'Quantitative serum test for congenital adrenal hyperplasia.',
-      price: 5500.0,
-      homeSamplingAvailable: true,
-      homeSamplingFee: 0.0,
-      turnaroundHours: 24,
-      category: 'Special Chemistry',
-      specimen: '3-5cc Clotted Blood or Serum',
-      reportingTime: 'After 1 day(s)',
-    ),
-    LabTestModel(
-      id: 'lt4',
-      name: 'Fasting Blood Sugar (FBS)',
-      code: '0104',
-      description: 'Glucose measurement after 8 hours of fasting – diabetes monitoring.',
-      price: 350.0,
-      homeSamplingAvailable: true,
-      homeSamplingFee: 0.0,
-      turnaroundHours: 12,
-      category: 'Chemical Pathology',
-      specimen: 'Fluoride / Plasma',
-      reportingTime: 'Same Day',
-    ),
-    LabTestModel(
-      id: 'lt6',
-      name: 'HbA1c (Glycated Haemoglobin)',
-      code: '0106',
-      description: '3-month average blood sugar – essential diabetes management test.',
-      price: 1500.0,
-      homeSamplingAvailable: true,
-      homeSamplingFee: 0.0,
-      turnaroundHours: 24,
-      category: 'Chemical Pathology',
-      specimen: 'Whole Blood EDTA',
-      reportingTime: 'Same Day',
-    ),
-  ];
-
-  List<DoctorModel> get _resolvedDoctors {
-    if (doctors.length >= 3) {
-      return doctors;
-    }
-    final list = List<DoctorModel>.from(doctors);
-    for (final fb in _fallbackDoctors) {
-      if (!list.any((d) =>
-          d.id == fb.id ||
-          d.fullName.toLowerCase() == fb.fullName.toLowerCase())) {
-        list.add(fb);
-      }
-    }
-    return list;
-  }
-
-  List<LabTestModel> get _resolvedLabTests {
-    if (labTests.length >= 3) {
-      return labTests;
-    }
-    final list = List<LabTestModel>.from(labTests);
-    for (final fb in _fallbackLabTests) {
-      if (!list.any((t) =>
-          t.id == fb.id ||
-          t.name.toLowerCase() == fb.name.toLowerCase())) {
-        list.add(fb);
-      }
-    }
-    return list;
-  }
-
-  List<ProductModel> get _resolvedProducts =>
-      products.isNotEmpty ? products : _fallbackProducts;
+  List<DoctorModel> get _resolvedDoctors => doctors;
+  List<LabTestModel> get _resolvedLabTests => labTests;
+  List<ProductModel> get _resolvedProducts => products;
 
   void _navigateToLab(BuildContext context) {
     if (onBookHomeSampling != null) {
@@ -280,19 +97,6 @@ class HealthcarePillars extends StatelessWidget {
         ),
       );
     }
-  }
-
-  void _showPrescriptionSheet(BuildContext context) {
-    if (onUploadPrescription != null) {
-      onUploadPrescription!();
-      return;
-    }
-
-    PrescriptionUploadModal.show(
-      context,
-      branchId: branchId,
-      branchName: branchName,
-    );
   }
 
   @override
@@ -520,82 +324,41 @@ class HealthcarePillars extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // 2. Interactive Search Bar + Prescription Upload Row
-        Row(
-          children: [
-            Expanded(
-              child: GestureDetector(
-                onTap: () => _navigateToPharmacy(context),
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: AppColors.structuralNavy.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.search_rounded,
-                        size: 18,
-                        color: AppColors.secondary,
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Search medicines, generics...',
-                          style: TextStyle(
-                            fontFamily: 'DM Sans',
-                            fontSize: 12,
-                            color: AppColors.secondary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+        // 2. Interactive Search Bar
+        GestureDetector(
+          onTap: () => _navigateToPharmacy(context),
+          child: Container(
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: AppColors.structuralNavy.withValues(alpha: 0.08),
               ),
             ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () => _showPrescriptionSheet(context),
-              child: Container(
-                height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF1F2),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: AppColors.primaryAccent.withValues(alpha: 0.25),
+            child: const Row(
+              children: [
+                Icon(
+                  Icons.search_rounded,
+                  size: 18,
+                  color: AppColors.secondary,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Search medicines, generics...',
+                    style: TextStyle(
+                      fontFamily: 'DM Sans',
+                      fontSize: 12,
+                      color: AppColors.secondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.upload_file_rounded,
-                      size: 16,
-                      color: AppColors.primaryAccent,
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      'Rx Upload',
-                      style: TextStyle(
-                        fontFamily: 'DM Sans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primaryAccent,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
         const SizedBox(height: 14),
 
@@ -640,14 +403,35 @@ class HealthcarePillars extends StatelessWidget {
         const SizedBox(height: 8),
 
         // Horizontal Product Cards: Auto-scrolling carousel (Moves card by card)
-        _FeaturedProductsAutoCarousel(
-          products: displayProducts,
-          itemWidth: 154,
-          spacing: 12,
-          height: 216,
-          itemBuilder: (context, product) =>
-              _buildProductCard(context, product),
-        ),
+        if (displayProducts.isNotEmpty)
+          _FeaturedProductsAutoCarousel(
+            products: displayProducts,
+            itemWidth: 154,
+            spacing: 12,
+            height: 216,
+            itemBuilder: (context, product) =>
+                _buildProductCard(context, product),
+          )
+        else
+          Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: const Center(
+              child: Text(
+                'No featured medicines currently available for this branch.',
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontSize: 12,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+          ),
         const SizedBox(height: 12),
 
         // 4. Shop Pharmacy CTA Button (Website Primary Button)
@@ -739,10 +523,22 @@ class HealthcarePillars extends StatelessWidget {
                       child:
                           product.imageUrl != null &&
                               product.imageUrl!.isNotEmpty
-                          ? Image.network(
-                              product.imageUrl!,
+                          ? CachedNetworkImage(
+                              imageUrl: product.imageUrl!,
                               fit: BoxFit.contain,
-                              errorBuilder: (_, _, _) =>
+                              placeholder: (_, _) => const Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation(
+                                      AppColors.primaryAccent,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (_, _, _) =>
                                   _buildProductPlaceholder(),
                             )
                           : _buildProductPlaceholder(),
@@ -1051,14 +847,35 @@ class HealthcarePillars extends StatelessWidget {
         const SizedBox(height: 10),
 
         // Horizontal Doctor Cards: Auto-scrolling carousel (Moves card by card)
-        _FeaturedDoctorsAutoCarousel(
-          doctors: resolvedDocs,
-          itemWidth: 240,
-          spacing: 12,
-          height: 160,
-          itemBuilder: (context, doctor, index) =>
-              _buildDoctorFeaturedCard(context, doctor, index),
-        ),
+        if (resolvedDocs.isNotEmpty)
+          _FeaturedDoctorsAutoCarousel(
+            doctors: resolvedDocs,
+            itemWidth: 240,
+            spacing: 12,
+            height: 160,
+            itemBuilder: (context, doctor, index) =>
+                _buildDoctorFeaturedCard(context, doctor, index),
+          )
+        else
+          Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: const Center(
+              child: Text(
+                'No doctors available yet for this branch.',
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontSize: 12,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+          ),
         const SizedBox(height: 14),
 
         // 5. Find Specialist Doctor Full-width CTA Button
@@ -1121,7 +938,7 @@ class HealthcarePillars extends StatelessWidget {
     return GestureDetector(
       onTap: () => _bookDoctor(context, doctor),
       child: Container(
-        width: 240,
+        width: 254,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -1389,10 +1206,20 @@ class HealthcarePillars extends StatelessWidget {
 
     if (doctor.profileImageUrl != null &&
         doctor.profileImageUrl!.startsWith('http')) {
-      return Image.network(
-        doctor.profileImageUrl!,
+      return CachedNetworkImage(
+        imageUrl: doctor.profileImageUrl!,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) =>
+        placeholder: (_, _) => Container(
+          color: const Color(0xFFF1F5F9),
+          child: const Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        ),
+        errorWidget: (_, _, _) =>
             _buildDoctorAssetOrInitial(assetPath, doctor),
       );
     }
@@ -1627,13 +1454,34 @@ class HealthcarePillars extends StatelessWidget {
         const SizedBox(height: 10),
 
         // Horizontal Lab Test Cards: Auto-scrolling carousel (Moves card by card)
-        _FeaturedLabTestsAutoCarousel(
-          tests: displayTests,
-          itemWidth: 240,
-          spacing: 12,
-          height: 164,
-          itemBuilder: (context, test) => _buildLabTestFeaturedCard(context, test),
-        ),
+        if (displayTests.isNotEmpty)
+          _FeaturedLabTestsAutoCarousel(
+            tests: displayTests,
+            itemWidth: 256,
+            spacing: 12,
+            height: 164,
+            itemBuilder: (context, test) => _buildLabTestFeaturedCard(context, test),
+          )
+        else
+          Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: const Center(
+              child: Text(
+                'No featured lab tests currently available for this branch.',
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontSize: 12,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+          ),
         const SizedBox(height: 12),
 
         // 5. Free Home Phlebotomy Value Proposition Banner
@@ -1797,7 +1645,7 @@ class HealthcarePillars extends StatelessWidget {
     return GestureDetector(
       onTap: () => _navigateToLab(context),
       child: Container(
-        width: 240,
+        width: 256,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -1973,30 +1821,37 @@ class HealthcarePillars extends StatelessWidget {
 
             // Price & Book Action Row
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Standard Fee',
-                      style: TextStyle(
-                        fontFamily: 'DM Sans',
-                        fontSize: 8.5,
-                        color: AppColors.secondary,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Standard Fee',
+                        style: TextStyle(
+                          fontFamily: 'DM Sans',
+                          fontSize: 8.5,
+                          color: AppColors.secondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Text(
-                      'Rs. ${test.price.toInt()}',
-                      style: const TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF0284C7),
+                      Text(
+                        'Rs. ${test.price.toInt()}',
+                        style: const TextStyle(
+                          fontFamily: 'Plus Jakarta Sans',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0284C7),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 6),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -2008,7 +1863,7 @@ class HealthcarePillars extends StatelessWidget {
                       ),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
+                          horizontal: 5,
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
@@ -2040,12 +1895,12 @@ class HealthcarePillars extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 4),
                     GestureDetector(
                       onTap: () => _bookLabTest(context, test),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 9,
+                          horizontal: 7,
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
@@ -2059,7 +1914,7 @@ class HealthcarePillars extends StatelessWidget {
                               'Book Test',
                               style: TextStyle(
                                 fontFamily: 'DM Sans',
-                                fontSize: 11,
+                                fontSize: 10.5,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                               ),
@@ -2411,7 +2266,7 @@ class _FeaturedLabTestsAutoCarousel extends StatefulWidget {
   const _FeaturedLabTestsAutoCarousel({
     required this.tests,
     required this.itemBuilder,
-    this.itemWidth = 240.0,
+    this.itemWidth = 256.0,
     this.spacing = 12.0,
     this.height = 164.0,
   });

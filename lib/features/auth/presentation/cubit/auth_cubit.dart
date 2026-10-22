@@ -98,7 +98,14 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await authRepository.logout();
-    } catch (_) {}
+    } catch (_) {
+      // Ignore network errors on logout
+    } finally {
+      emit(Unauthenticated());
+    }
+  }
+
+  void forceUnauthenticated() {
     emit(Unauthenticated());
   }
 }

@@ -1,12 +1,21 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace = "com.example.pharmacy_app"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.drkarachi"
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -14,26 +23,61 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                val keyAliasVal = keystoreProperties.getProperty("keyAlias")
+                val keyPassVal = keystoreProperties.getProperty("keyPassword")
+                val storePassVal = keystoreProperties.getProperty("storePassword")
+                val storeFilePath = keystoreProperties.getProperty("storeFile")
+
+                if (keyAliasVal.isNullOrBlank() || keyPassVal.isNullOrBlank() ||
+                    storePassVal.isNullOrBlank() || storeFilePath.isNullOrBlank()) {
+                    throw GradleException(
+                        "android/key.properties is missing one or more required keys: " +
+                        "keyAlias, keyPassword, storePassword, storeFile."
+                    )
+                }
+
+                keyAlias = keyAliasVal
+                keyPassword = keyPassVal
+                storePassword = storePassVal
+                storeFile = file(storeFilePath)
+            }
+        }
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.pharmacy_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.drkarachi"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
-        // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
-        // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
-        // flag during build.
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                val isReleaseTask = gradle.startParameter.taskNames.any {
+                    it.contains("Release", ignoreCase = true) || it.contains("assemble", ignoreCase = true)
+                }
+                if (isReleaseTask) {
+                    throw GradleException(
+                        "Release build failed: 'android/key.properties' is missing. " +
+                        "Copy 'android/key.properties.example' to 'android/key.properties' and configure keystore passwords. " +
+                        "Release builds will NEVER fall back to debug signing."
+                    )
+                }
+            }
+
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

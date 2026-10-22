@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart' as material;
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
+  static const String bodyFont = 'DM Sans';
+  static const String headerFont = 'Plus Jakarta Sans';
+
   static material.ThemeData get lightTheme {
-    final material.TextTheme baseTextTheme =
-        GoogleFonts.dmSansTextTheme();
-    final headerFont = GoogleFonts.plusJakartaSans().fontFamily;
+    const material.TextTheme baseTextTheme = material.TextTheme(
+      bodyLarge: material.TextStyle(fontFamily: bodyFont),
+      bodyMedium: material.TextStyle(fontFamily: bodyFont),
+      bodySmall: material.TextStyle(fontFamily: bodyFont),
+      labelLarge: material.TextStyle(fontFamily: bodyFont),
+      labelMedium: material.TextStyle(fontFamily: bodyFont),
+      labelSmall: material.TextStyle(fontFamily: bodyFont),
+      titleLarge: material.TextStyle(fontFamily: headerFont),
+      titleMedium: material.TextStyle(fontFamily: headerFont),
+      titleSmall: material.TextStyle(fontFamily: headerFont),
+    );
 
     return material.ThemeData(
       useMaterial3: true,

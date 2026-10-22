@@ -7,6 +7,7 @@ import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/auth_text_field.dart';
 import 'register_screen.dart';
+import '../../../forgot_password/presentation/pages/forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,16 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _onQuickTestLogin(BuildContext context) {
-    const testPhone = '+923001234567';
-    const testPass = 'Password123!';
-    _phoneController.text = testPhone;
-    _passwordController.text = testPass;
-    context.read<AuthCubit>().login(
-          phone: testPhone,
-          password: testPass,
-        );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       // Phone Input
                                       AuthTextField(
                                         label: 'Phone Number',
-                                        hintText: '+923001234567',
+                                        hintText: '+92 3XX XXXXXXX',
                                         controller: _phoneController,
                                         prefixIcon: Icons.phone_outlined,
                                         keyboardType: TextInputType.phone,
@@ -261,7 +252,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                           return null;
                                         },
                                       ),
-                                      const SizedBox(height: 22),
+                                      const SizedBox(height: 8),
+
+                                      // Forgot Password Link
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) =>
+                                                    const ForgotPasswordScreen(),
+                                              ),
+                                            );
+                                          },
+                                          style: TextButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                              vertical: 4,
+                                            ),
+                                            minimumSize: Size.zero,
+                                            tapTargetSize:
+                                                MaterialTapTargetSize.shrinkWrap,
+                                          ),
+                                          child: const Text(
+                                            'Forgot password?',
+                                            style: TextStyle(
+                                              fontSize: 12.5,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primaryAccent,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
 
                                       // Sign In Button
                                       Container(
@@ -324,88 +348,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
 
-                                      // Developer Quick Test Login (Matching Frontend dev card)
-                                      const SizedBox(height: 20),
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFFFF1F2).withValues(alpha: 0.7),
-                                          borderRadius: BorderRadius.circular(14),
-                                          border: Border.all(
-                                            color: AppColors.primaryAccent.withValues(alpha: 0.25),
-                                            style: BorderStyle.solid,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.auto_awesome,
-                                                  size: 14,
-                                                  color: AppColors.primaryAccent,
-                                                ),
-                                                SizedBox(width: 6),
-                                                Text(
-                                                  'Quick Test Account',
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Color(0xFF991B1B),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 4),
-                                            const Text(
-                                              'Patient account (+923001234567 / Password123!) for rapid testing.',
-                                              style: TextStyle(
-                                                fontSize: 10.5,
-                                                color: Color(0xFF7F1D1D),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            SizedBox(
-                                              height: 32,
-                                              width: double.infinity,
-                                              child: OutlinedButton(
-                                                onPressed: isLoading
-                                                    ? null
-                                                    : () => _onQuickTestLogin(context),
-                                                style: OutlinedButton.styleFrom(
-                                                  backgroundColor: Colors.white,
-                                                  side: BorderSide(
-                                                    color: AppColors.primaryAccent
-                                                        .withValues(alpha: 0.4),
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(8),
-                                                  ),
-                                                  padding: EdgeInsets.zero,
-                                                ),
-                                                child: const Text(
-                                                  'Auto-fill & Sign In as Test Patient',
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color(0xFF991B1B),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
                                       // Register Link
-                                      const SizedBox(height: 18),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                      const SizedBox(height: 24),
+                                      Wrap(
+                                        alignment: WrapAlignment.center,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
                                         children: [
                                           const Text(
-                                            "Don't have an account yet? ",
+                                            "Don't have an account? ",
                                             style: TextStyle(
                                               fontSize: 13,
                                               color: Color(0xFF475569),

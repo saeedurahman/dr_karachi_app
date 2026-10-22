@@ -281,7 +281,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       // Phone Input
                                       AuthTextField(
                                         label: 'Phone Number',
-                                        hintText: '+923001234567',
+                                        hintText: '+92 3XX XXXXXXX',
                                         controller: _phoneController,
                                         prefixIcon: Icons.phone_outlined,
                                         keyboardType: TextInputType.phone,
@@ -483,8 +483,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                                       // Login Link
                                       const SizedBox(height: 18),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                      Wrap(
+                                        alignment: WrapAlignment.center,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
                                         children: [
                                           const Text(
                                             'Already have an account? ',

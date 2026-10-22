@@ -65,7 +65,9 @@ class LabRemoteDataSourceImpl implements LabRemoteDataSource {
         categories: [],
       );
     } catch (e, stack) {
-      debugPrint('[LabRemoteDataSource] Error fetching lab tests: $e\n$stack');
+      if (kDebugMode) {
+        debugPrint('[LabRemoteDataSource] Error fetching lab tests: $e\n$stack');
+      }
       rethrow;
     }
   }
@@ -87,7 +89,9 @@ class LabRemoteDataSourceImpl implements LabRemoteDataSource {
       }
       return [];
     } catch (e) {
-      debugPrint('[LabRemoteDataSource] Error fetching categories: $e');
+      if (kDebugMode) {
+        debugPrint('[LabRemoteDataSource] Error fetching categories: $e');
+      }
       return [];
     }
   }

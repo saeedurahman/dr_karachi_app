@@ -100,31 +100,43 @@ class CartCubit extends Cubit<CartState> {
     lastErrorMessage = null;
     lastErrorWasAuth = false;
 
-    debugPrint('[CartCubit] addToCart called: product="${product.name}" (ID: ${product.id}), branchId="$branchId", quantity=$quantity');
+    if (kDebugMode) {
+      debugPrint('[CartCubit] addToCart called: product="${product.name}" (ID: ${product.id}), branchId="$branchId", quantity=$quantity');
+    }
     final current = state;
-    debugPrint('[CartCubit] Current CartState: ${current.runtimeType}');
+    if (kDebugMode) {
+      debugPrint('[CartCubit] Current CartState: ${current.runtimeType}');
+    }
     CartModel existingCart = CartModel.empty();
     if (current is CartLoaded) {
       existingCart = current.cart;
-      debugPrint('[CartCubit] Existing cart has ${existingCart.items.length} items');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] Existing cart has ${existingCart.items.length} items');
+      }
       emit(current.copyWith(addingProductId: product.id));
     }
 
     try {
-      debugPrint('[CartCubit] Calling repository.addToCart(productId: ${product.id}, branchId: $branchId, qty: $quantity)...');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] Calling repository.addToCart(productId: ${product.id}, branchId: $branchId, qty: $quantity)...');
+      }
       final updatedCart = await repository.addToCart(
         productId: product.id,
         branchId: branchId,
         quantity: quantity,
       );
-      debugPrint('[CartCubit] repository.addToCart SUCCESS! Returned cart items: ${updatedCart.items.length}');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] repository.addToCart SUCCESS! Returned cart items: ${updatedCart.items.length}');
+      }
 
       // Match branch
       if (_cachedBranches.isNotEmpty) {
         final match = _cachedBranches.where((b) => b.id == branchId);
         if (match.isNotEmpty) {
           _selectedBranch = match.first;
-          debugPrint('[CartCubit] Matched branch: ${_selectedBranch?.name}');
+          if (kDebugMode) {
+            debugPrint('[CartCubit] Matched branch: ${_selectedBranch?.name}');
+          }
         }
       }
 
@@ -134,10 +146,14 @@ class CartCubit extends Cubit<CartState> {
         currentBranch: _selectedBranch,
         addingProductId: null,
       ));
-      debugPrint('[CartCubit] Emitted CartLoaded state successfully');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] Emitted CartLoaded state successfully');
+      }
       return true;
     } on BranchConflictException catch (e) {
-      debugPrint('[CartCubit] Caught BranchConflictException: currentBranch=${e.warning.currentBranchId}, requestedBranch=${e.warning.requestedBranchId}');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] Caught BranchConflictException: currentBranch=${e.warning.currentBranchId}, requestedBranch=${e.warning.requestedBranchId}');
+      }
       String currName = 'another branch';
       String reqName = 'this branch';
 
@@ -155,7 +171,9 @@ class CartCubit extends Cubit<CartState> {
         requestedBranchName: reqName,
         currentCart: existingCart,
       ));
-      debugPrint('[CartCubit] Emitted CartConflict state');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] Emitted CartConflict state');
+      }
       return false;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
@@ -170,7 +188,9 @@ class CartCubit extends Cubit<CartState> {
           lastErrorMessage = 'Could not add item to cart. Please try again.';
         }
       }
-      debugPrint('[CartCubit] DioException in addToCart: $lastErrorMessage');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] DioException in addToCart: $lastErrorMessage');
+      }
       if (current is CartLoaded) {
         emit(current.copyWith(clearAddingProduct: true));
       }
@@ -178,8 +198,9 @@ class CartCubit extends Cubit<CartState> {
     } catch (e, stack) {
       lastErrorWasAuth = false;
       lastErrorMessage = 'An unexpected error occurred.';
-      debugPrint('[CartCubit] ERROR in addToCart: $e');
-      debugPrint('[CartCubit] StackTrace: $stack');
+      if (kDebugMode) {
+        debugPrint('[CartCubit] ERROR in addToCart: $e\n$stack');
+      }
       if (current is CartLoaded) {
         emit(current.copyWith(clearAddingProduct: true));
       }

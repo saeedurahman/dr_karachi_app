@@ -1,5 +1,8 @@
 class ApiConstants {
-  static const String baseUrl = 'https://drkarachibackend-production.up.railway.app/api/v1';
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'https://drkarachibackend-production.up.railway.app/api/v1',
+  );
   
   // Auth Endpoints
   static const String login = '/auth/login';
@@ -7,6 +10,9 @@ class ApiConstants {
   static const String me = '/auth/me';
   static const String refresh = '/auth/refresh';
   static const String logout = '/auth/logout';
+  static const String forgotPassword = '/auth/forgot-password';
+  static const String forgotPasswordVerify = '/auth/forgot-password/verify';
+  static const String resetPassword = '/auth/reset-password';
 
   // Home & Services Endpoints
   static const String branches = '/branches/';

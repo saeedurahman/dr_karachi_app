@@ -107,10 +107,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    final refreshToken = await storageService.getRefreshToken();
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await remoteDataSource.logout(refreshToken: refreshToken);
+    try {
+      final refreshToken = await storageService.getRefreshToken();
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await remoteDataSource.logout(refreshToken: refreshToken);
+      }
+    } catch (_) {
+      // Ignore remote logout failure so local auth is always cleared
+    } finally {
+      await storageService.clearAuth();
     }
-    await storageService.clearAuth();
   }
 }

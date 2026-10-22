@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../home/data/models/doctor_model.dart';
 
@@ -160,20 +161,17 @@ class DoctorAvatar extends StatelessWidget {
     final localAsset = getLocalAssetForDoctor(doctor);
 
     if (networkUrl != null) {
-      return Image.network(
-        networkUrl,
+      return CachedNetworkImage(
+        imageUrl: networkUrl,
         width: size,
         height: size,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
+        placeholder: (context, url) => _buildLoadingPlaceholder(),
+        errorWidget: (context, url, error) {
           if (localAsset != null) {
             return _buildAssetImage(localAsset);
           }
           return _buildInitialsFallback();
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return _buildLoadingPlaceholder();
         },
       );
     }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
@@ -44,7 +45,9 @@ class _PharmacyScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<CartCubit, CartState>(
       listener: (context, state) {
-        debugPrint('[PharmacyScreen] BlocListener received CartState: ${state.runtimeType}');
+        if (kDebugMode) {
+          debugPrint('[PharmacyScreen] BlocListener received CartState: ${state.runtimeType}');
+        }
         if (state is CartConflict) {
           BranchConflictDialog.show(
             context,
@@ -147,9 +150,6 @@ class _PharmacyScreenContent extends StatelessWidget {
                             _buildBranchSelectorStrip(context),
                             const SizedBox(height: 12),
 
-                            // Prescription Quick Upload Banner
-                            _buildPrescriptionBanner(context),
-                            const SizedBox(height: 14),
 
                             // Search Bar
                             PharmacySearchBar(
@@ -293,7 +293,7 @@ class _PharmacyScreenContent extends StatelessWidget {
                                   16,
                                   4,
                                   16,
-                                  hasItemsInCart ? 170 : 100,
+                                  hasItemsInCart ? 170 : 120,
                                 ),
                                 sliver: SliverGrid(
                                   gridDelegate:
@@ -313,7 +313,9 @@ class _PharmacyScreenContent extends StatelessWidget {
                                         product: product,
                                         isAdding: isAdding,
                                         onAddToCart: () {
-                                          debugPrint('[PharmacyScreen] ProductCard.onAddToCart triggered for: "${product.name}" (ID: ${product.id})');
+                                          if (kDebugMode) {
+                                            debugPrint('[PharmacyScreen] ProductCard.onAddToCart triggered for: "${product.name}" (ID: ${product.id})');
+                                          }
                                           _handleAddToCart(
                                             context,
                                             product,
@@ -620,37 +622,51 @@ class _PharmacyScreenContent extends StatelessWidget {
     dynamic product,
     CartState cartState,
   ) async {
-    debugPrint('-------------------- [ADD TO CART FLOW] --------------------');
-    debugPrint('[PharmacyScreen] _handleAddToCart START for: "${product.name}" (ID: ${product.id})');
-    debugPrint('[PharmacyScreen] Current cartState runtimeType: ${cartState.runtimeType}');
+    if (kDebugMode) {
+      debugPrint('-------------------- [ADD TO CART FLOW] --------------------');
+      debugPrint('[PharmacyScreen] _handleAddToCart START for: "${product.name}" (ID: ${product.id})');
+      debugPrint('[PharmacyScreen] Current cartState runtimeType: ${cartState.runtimeType}');
+    }
 
     String? branchId;
     if (cartState is CartLoaded && cartState.currentBranch != null) {
       branchId = cartState.currentBranch!.id;
-      debugPrint('[PharmacyScreen] Branch from CartLoaded.currentBranch: $branchId (${cartState.currentBranch!.name})');
+      if (kDebugMode) {
+        debugPrint('[PharmacyScreen] Branch from CartLoaded.currentBranch: $branchId (${cartState.currentBranch!.name})');
+      }
     } else if (cartState is CartLoaded && cartState.branches.isNotEmpty) {
       branchId = cartState.branches.first.id;
-      debugPrint('[PharmacyScreen] Branch from CartLoaded.branches.first: $branchId');
+      if (kDebugMode) {
+        debugPrint('[PharmacyScreen] Branch from CartLoaded.branches.first: $branchId');
+      }
     } else {
       branchId = context.read<PharmacyCubit>().currentBranchId;
-      debugPrint('[PharmacyScreen] Branch from PharmacyCubit: $branchId');
+      if (kDebugMode) {
+        debugPrint('[PharmacyScreen] Branch from PharmacyCubit: $branchId');
+      }
     }
 
     // Default to real Quetta Cantt Branch ID from database
     if (branchId == null) {
       branchId = '44444444-4444-4444-4444-444444444444';
-      debugPrint('[PharmacyScreen] branchId was null, using default: $branchId');
+      if (kDebugMode) {
+        debugPrint('[PharmacyScreen] branchId was null, using default: $branchId');
+      }
     }
 
-    debugPrint('[PharmacyScreen] Calling CartCubit.addToCart(productId: ${product.id}, branchId: $branchId, qty: 1)...');
+    if (kDebugMode) {
+      debugPrint('[PharmacyScreen] Calling CartCubit.addToCart(productId: ${product.id}, branchId: $branchId, qty: 1)...');
+    }
     final success = await context.read<CartCubit>().addToCart(
           product,
           branchId,
           quantity: 1,
         );
 
-    debugPrint('[PharmacyScreen] CartCubit.addToCart finished -> success: $success, mounted: ${context.mounted}');
-    debugPrint('------------------------------------------------------------');
+    if (kDebugMode) {
+      debugPrint('[PharmacyScreen] CartCubit.addToCart finished -> success: $success, mounted: ${context.mounted}');
+      debugPrint('------------------------------------------------------------');
+    }
 
     if (!context.mounted) return;
 
@@ -807,98 +823,6 @@ class _PharmacyScreenContent extends StatelessWidget {
               textStyle: const TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrescriptionBanner(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primaryAccent.withValues(alpha: 0.08),
-            AppColors.primaryAccent.withValues(alpha: 0.03),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AppColors.primaryAccent.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.primaryAccent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.receipt_long_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Have a Doctor Prescription?',
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.structuralNavy,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'Upload prescription & our pharmacist will assist you',
-                  style: TextStyle(
-                    fontFamily: 'DM Sans',
-                    fontSize: 11,
-                    color: AppColors.secondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Prescription upload flow available!'),
-                  duration: Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.primaryAccent,
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryAccent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Upload',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
             ),
